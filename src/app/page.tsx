@@ -62,29 +62,29 @@ export default function DashboardPage() {
         dailyGoal={progress.dailyGoal}
       />
 
-      <main className="relative mx-auto max-w-6xl px-4 py-10">
+      <main className="page-shell relative py-8 sm:py-10">
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-12 text-center"
         >
-          <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             <span className="bg-gradient-to-r from-astro-orange via-astro-purple to-astro-cyan bg-clip-text text-transparent">
               {t("dashboard.hero")}
             </span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-gray-400">{t("dashboard.subtitle")}</p>
-          <div className="mt-6 inline-flex flex-wrap justify-center gap-3">
-            <span className="rounded-lg border border-astro-purple/40 bg-astro-card px-4 py-2 text-sm">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400">{t("dashboard.subtitle")}</p>
+          <div className="mt-6 flex w-full max-w-md flex-col gap-3 sm:mx-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center">
+            <span className="rounded-xl border border-astro-purple/40 bg-astro-card px-4 py-3 text-base">
               🛸 {levelTitle}
             </span>
-            <span className="rounded-lg border border-astro-orange/40 bg-astro-card px-4 py-2 text-sm">
+            <span className="rounded-xl border border-astro-orange/40 bg-astro-card px-4 py-3 text-base">
               {t("dashboard.nextLevel", { percent: xpInfo.progress })}
             </span>
           </div>
         </motion.section>
 
-        <section className="mb-10 grid gap-4 md:grid-cols-3">
+        <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
           {moduleStats.map(({ module, retention }) => (
             <GalaxyProgress
               key={module.id}
@@ -106,7 +106,7 @@ export default function DashboardPage() {
           ))}
         </section>
 
-        <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {moduleStats.map(({ module, completed, retention }, index) => (
             <ModuleCard
               key={module.id}
@@ -122,34 +122,34 @@ export default function DashboardPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-12 rounded-2xl border border-astro-cyan/20 bg-astro-card/60 p-6"
+          className="mt-12 rounded-2xl border border-astro-cyan/20 bg-astro-card/60 p-4 sm:p-6"
         >
           <h3 className="font-display text-lg font-semibold text-astro-cyan">
             {t("dashboard.quickLaunch")}
           </h3>
-          <p className="mt-1 text-sm text-gray-500">{t("dashboard.quickLaunchHint")}</p>
-          <div className="mt-4 flex flex-wrap gap-3">
+          <p className="mt-1 text-base text-gray-500">{t("dashboard.quickLaunchHint")}</p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href="/modules/grammar"
-              className="rounded-lg bg-gradient-to-r from-astro-orange to-astro-purple px-4 py-2 text-sm font-semibold text-white shadow-neon hover:opacity-90"
+              className="touch-target-lg flex items-center justify-center rounded-xl bg-gradient-to-r from-astro-orange to-astro-purple px-4 text-base font-semibold text-white shadow-neon hover:opacity-90"
             >
               {t("dashboard.grammarGalaxy")}
             </Link>
             <Link
               href="/vision"
-              className="rounded-lg border border-astro-orange/50 px-4 py-2 text-sm text-astro-orange hover:bg-astro-orange/10"
+              className="touch-target-lg flex items-center justify-center rounded-xl border border-astro-orange/50 px-4 text-base text-astro-orange hover:bg-astro-orange/10"
             >
               {t("dashboard.visionWall")}
             </Link>
             <Link
               href="/settings"
-              className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-400 hover:bg-astro-surface"
+              className="touch-target-lg flex items-center justify-center rounded-xl border border-gray-600 px-4 text-base text-gray-400 hover:bg-astro-surface"
             >
               {t("dashboard.notifications")}
             </Link>
             <Link
               href="/review"
-              className="rounded-lg border border-astro-purple/50 px-4 py-2 text-sm text-astro-purple hover:bg-astro-purple/10"
+              className="touch-target-lg flex items-center justify-center rounded-xl border border-astro-purple/50 px-4 text-base text-astro-purple hover:bg-astro-purple/10"
             >
               {t("dashboard.dueReviews")}
             </Link>

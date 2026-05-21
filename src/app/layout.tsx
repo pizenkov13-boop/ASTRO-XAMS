@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     "Grammar, vocabulary, and SAT prep with spaced repetition, quizzes, and dopamine ad-libs.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${orbitron.variable} ${spaceGrotesk.variable}`}>
-      <body className="font-body antialiased">
+      <body className="font-body antialiased overflow-x-hidden">
         <AppProviders>
           <AdlibPreloader />
           <ServiceWorkerBootstrap />

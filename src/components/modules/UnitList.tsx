@@ -29,7 +29,7 @@ export function UnitList({ units, basePath, completedIds, progress }: UnitListPr
   };
 
   return (
-    <ul className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {units.map((unit, i) => {
         const done = completedIds.includes(unit.id);
         const bucket = getUnitBucket(unit, progress);
@@ -44,7 +44,7 @@ export function UnitList({ units, basePath, completedIds, progress }: UnitListPr
           >
             <Link
               href={`${basePath}/${unit.id}`}
-              className={`block rounded-xl border p-4 transition hover:border-astro-orange/50 ${
+              className={`block min-h-[56px] rounded-xl border p-4 text-base transition touch-manipulation hover:border-astro-orange/50 ${
                 done
                   ? "border-astro-cyan/30 bg-astro-cyan/5"
                   : `bg-astro-card ${BUCKET_STYLES[bucket]}`

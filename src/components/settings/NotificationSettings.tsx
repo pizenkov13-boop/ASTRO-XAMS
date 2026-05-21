@@ -47,72 +47,72 @@ export function NotificationSettingsPanel() {
 
   if (!supported) {
     return (
-      <p className="text-sm text-gray-500">{t("notifications.unsupported")}</p>
+      <p className="w-full text-base text-gray-500">{t("notifications.unsupported")}</p>
     );
   }
 
   return (
-    <div className="space-y-4 rounded-xl border border-astro-purple/30 bg-astro-card p-5">
+    <div className="w-full space-y-4 rounded-xl border border-astro-purple/30 bg-astro-card p-4 sm:p-5">
       <h3 className="font-display text-lg font-semibold text-white">{t("notifications.title")}</h3>
-      <p className="text-sm text-gray-500">{t("notifications.hint")}</p>
+      <p className="w-full text-base text-gray-500">{t("notifications.hint")}</p>
 
       {permission === "denied" && (
-        <p className="text-sm text-red-400">{t("notifications.blocked")}</p>
+        <p className="w-full text-base text-red-400">{t("notifications.blocked")}</p>
       )}
 
       {permission !== "granted" ? (
         <button
           type="button"
           onClick={() => void enableNotifications()}
-          className="rounded-lg bg-astro-orange px-4 py-2 text-sm font-semibold text-black"
+          className="touch-target-lg w-full rounded-xl bg-astro-orange px-4 text-base font-semibold text-black"
         >
           {t("notifications.enable")}
         </button>
       ) : (
-        <>
-          <label className="flex items-center gap-3 text-sm">
+        <div className="flex w-full flex-col gap-4">
+          <label className="flex min-h-[52px] w-full cursor-pointer items-center gap-4 text-base">
             <input
               type="checkbox"
               checked={settings.enabled}
               onChange={(e) => update({ enabled: e.target.checked })}
-              className="accent-astro-orange"
+              className="h-5 w-5 shrink-0 accent-astro-orange"
             />
-            <span>{t("notifications.on")}</span>
+            <span className="flex-1">{t("notifications.on")}</span>
           </label>
 
-          <label className="flex items-center gap-3 text-sm">
+          <label className="flex min-h-[52px] w-full cursor-pointer items-center gap-4 text-base">
             <input
               type="checkbox"
               checked={settings.dueReminders}
               disabled={!settings.enabled}
               onChange={(e) => update({ dueReminders: e.target.checked })}
-              className="accent-astro-orange"
+              className="h-5 w-5 shrink-0 accent-astro-orange"
             />
-            <span>{t("notifications.dueReminders")}</span>
+            <span className="flex-1">{t("notifications.dueReminders")}</span>
           </label>
 
-          <label className="flex items-center gap-3 text-sm">
+          <label className="flex min-h-[52px] w-full cursor-pointer items-center gap-4 text-base">
             <input
               type="checkbox"
               checked={settings.dailyReminder}
               disabled={!settings.enabled}
               onChange={(e) => update({ dailyReminder: e.target.checked })}
-              className="accent-astro-orange"
+              className="h-5 w-5 shrink-0 accent-astro-orange"
             />
-            <span>{t("notifications.dailyReminder")}</span>
+            <span className="flex-1">{t("notifications.dailyReminder")}</span>
           </label>
 
-          <div>
-            <label className="text-xs text-gray-500">{t("notifications.dailyTime")}</label>
+          <div className="w-full">
+            <label className="block text-base text-gray-500">{t("notifications.dailyTime")}</label>
             <input
               type="time"
               value={settings.dailyTime}
               disabled={!settings.enabled || !settings.dailyReminder}
               onChange={(e) => update({ dailyTime: e.target.value })}
-              className="mt-1 block rounded-lg border border-astro-surface bg-astro-bg px-3 py-2 text-white"
+              className="input-mobile mt-2"
             />
           </div>
-        </>
+        </div>
       )}
     </div>
   );

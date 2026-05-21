@@ -28,7 +28,7 @@ export function ModuleCard({
       transition={{ delay: index * 0.1 }}
     >
       <Link href={module.href}>
-        <article className="group relative overflow-hidden rounded-2xl border border-astro-purple/30 bg-astro-card p-6 shadow-neon transition hover:border-astro-orange/60 hover:shadow-neon-strong">
+        <article className="group relative overflow-hidden rounded-2xl border border-astro-purple/30 bg-astro-card p-5 shadow-neon transition hover:border-astro-orange/60 hover:shadow-neon-strong sm:p-6">
           <div
             className={`absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br ${module.gradient} opacity-20 blur-2xl transition group-hover:opacity-40`}
           />
@@ -38,7 +38,7 @@ export function ModuleCard({
               {module.title}
             </h2>
             <p className="text-sm text-astro-purple">{module.subtitle}</p>
-            <p className="mt-2 text-sm text-gray-400">{module.description}</p>
+            <p className="mt-2 text-base text-gray-400">{module.description}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               <span className="rounded-full bg-astro-surface px-2 py-0.5 text-xs text-astro-cyan">
                 {module.level}

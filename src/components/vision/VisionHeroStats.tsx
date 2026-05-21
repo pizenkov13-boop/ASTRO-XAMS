@@ -54,7 +54,7 @@ export function VisionHeroStats({ stats }: VisionHeroStatsProps) {
           key={item.label}
           className="rounded-xl border border-white/10 bg-black/60 px-4 py-5 backdrop-blur-md"
         >
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">
+          <p className="text-base font-bold uppercase tracking-[0.15em] text-gray-500">
             {item.label}
           </p>
           <p className={`mt-2 font-display text-2xl font-black md:text-3xl ${item.accent}`}>

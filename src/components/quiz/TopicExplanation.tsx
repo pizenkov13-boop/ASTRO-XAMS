@@ -34,7 +34,7 @@ export function TopicExplanation({
         <button
           type="button"
           onClick={onExplain}
-          className="rounded-lg border border-astro-purple/50 bg-astro-purple/20 px-4 py-2 text-sm font-semibold text-astro-purple transition hover:border-astro-orange hover:text-astro-orange"
+          className="touch-target-lg w-full rounded-xl border border-astro-purple/50 bg-astro-purple/20 px-4 text-base font-semibold text-astro-purple transition hover:border-astro-orange hover:text-astro-orange sm:w-auto"
         >
           {t("quiz.explainAi")}
         </button>
@@ -42,11 +42,11 @@ export function TopicExplanation({
 
       {(showAi || loading || error) && (
         <div className="rounded-lg border border-astro-purple/40 bg-astro-purple/10 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-astro-purple">
+          <p className="text-base font-semibold uppercase tracking-wider text-astro-purple">
             {t("quiz.aiTutor")}
           </p>
           {loading && (
-            <p className="mt-2 text-sm text-gray-400 animate-pulse">
+            <p className="mt-2 text-base text-gray-400 animate-pulse">
               {t("quiz.aiThinking")}
             </p>
           )}
@@ -55,7 +55,7 @@ export function TopicExplanation({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mt-2 whitespace-pre-line text-sm leading-relaxed text-gray-200"
+              className="mt-2 whitespace-pre-line text-base leading-relaxed text-gray-200"
             >
               {aiExplanation}
             </motion.p>

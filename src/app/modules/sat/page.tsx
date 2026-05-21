@@ -20,7 +20,7 @@ export default function SatModulePage() {
   if (!hydrated) return null;
 
   return (
-    <div className="min-h-screen bg-astro-bg">
+    <div className="min-h-screen overflow-x-hidden bg-astro-bg">
       <StreakBar
         streak={progress.streak}
         xp={progress.xp}
@@ -28,12 +28,17 @@ export default function SatModulePage() {
         dailyCompleted={progress.dailyCompleted}
         dailyGoal={progress.dailyGoal}
       />
-      <main className="mx-auto max-w-6xl px-4 py-8">
-        <Link href="/" className="text-sm text-astro-purple hover:text-astro-orange">
+      <main className="page-shell">
+        <Link
+          href="/"
+          className="touch-target inline-flex text-base text-astro-purple hover:text-astro-orange"
+        >
           {t("common.dashboard")}
         </Link>
-        <h1 className="mt-4 font-display text-3xl font-bold text-white">{t("sat.pageTitle")}</h1>
-        <p className="text-gray-400">
+        <h1 className="mt-4 font-display text-2xl font-bold text-white sm:text-3xl">
+          {t("sat.pageTitle")}
+        </h1>
+        <p className="text-base text-gray-400">
           {t("sat.pageSubtitle", { count: satUnits.length })}
         </p>
         <UnitList

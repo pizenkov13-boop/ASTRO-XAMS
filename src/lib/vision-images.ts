@@ -25,23 +25,18 @@ export function visionImageUrl(filename: string): string {
   return `/images/vision/${encodeURIComponent(filename)}`;
 }
 
-/** Mosaic tile sizes — cycles for any number of images */
+/** Mosaic tile sizes — 2 cols mobile, 4 cols md+ */
 export const MOSAIC_SPAN_PATTERNS = [
-  "col-span-2 row-span-2 md:col-span-2 md:row-span-2",
+  "col-span-2 row-span-2",
   "col-span-1 row-span-1",
   "col-span-1 row-span-1",
-  "col-span-1 row-span-2 md:row-span-2",
+  "col-span-1 row-span-2",
   "col-span-1 row-span-1",
-  "col-span-2 row-span-1 md:col-span-2",
-  "col-span-2 row-span-2 md:col-span-2 md:row-span-2",
+  "col-span-2 row-span-1",
+  "col-span-2 row-span-2",
   "col-span-1 row-span-1",
 ];
 
 export function mosaicClassForIndex(index: number): string {
   return MOSAIC_SPAN_PATTERNS[index % MOSAIC_SPAN_PATTERNS.length];
-}
-
-export function labelFromFilename(filename: string): string {
-  const base = filename.replace(/\.[^.]+$/, "");
-  return base || "Vision";
 }

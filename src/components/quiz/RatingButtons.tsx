@@ -34,20 +34,20 @@ export function RatingButtons({ onRate, disabled, selected }: RatingButtonsProps
 
   return (
     <div className="mt-4">
-      <p className="mb-2 text-xs text-gray-500">{t("quiz.ratingPrompt")}</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="mb-3 text-base text-gray-500">{t("quiz.ratingPrompt")}</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {buttons.map((b) => (
           <button
             key={b.quality}
             type="button"
             disabled={disabled}
             onClick={() => onRate(b.quality)}
-            className={`flex-1 min-w-[90px] rounded-lg border px-3 py-2 text-sm font-semibold transition ${b.color} ${
+            className={`w-full min-h-[60px] flex-1 rounded-xl border px-4 py-3 text-base font-semibold transition touch-manipulation sm:min-w-[100px] ${b.color} ${
               selected === b.quality ? "ring-2 ring-white/30" : ""
             }`}
           >
             {b.label}
-            <span className="mt-0.5 block text-[10px] font-normal opacity-70">{b.hint}</span>
+            <span className="mt-1 block text-sm font-normal opacity-70">{b.hint}</span>
           </button>
         ))}
       </div>

@@ -20,7 +20,7 @@ export function GalaxyProgress({
 
   return (
     <div className="rounded-xl border border-astro-purple/20 bg-astro-card/80 p-4">
-      <div className="mb-2 flex justify-between text-sm">
+      <div className="mb-2 flex justify-between text-base">
         <span className="text-gray-300">{label}</span>
         <span className="font-mono text-astro-cyan">
           {t("galaxy.retention", { percent })}
@@ -43,7 +43,7 @@ export function GalaxyProgress({
           />
         ))}
       </div>
-      <p className="mt-2 text-xs text-gray-500">
+      <p className="mt-2 text-base text-gray-500">
         {t("galaxy.explored", { completed, total })}
       </p>
     </div>

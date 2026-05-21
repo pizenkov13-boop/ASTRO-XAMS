@@ -160,18 +160,18 @@ export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProp
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="max-w-md w-full rounded-2xl border border-astro-cyan/40 bg-astro-card p-6 shadow-neon-strong"
+              className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-2xl border border-astro-cyan/40 bg-astro-card p-5 shadow-neon-strong sm:p-6"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
             >
               <p className="font-display text-lg text-astro-cyan">{t("spotify.rewardTitle")}</p>
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-base text-gray-400">
                 {t("spotify.rewardBody", { percent: scorePercent })}
               </p>
 
@@ -214,7 +214,7 @@ export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProp
                 <button
                   type="button"
                   onClick={onClose}
-                  className="ml-auto rounded-lg bg-astro-orange px-4 py-2 text-sm font-semibold text-white"
+                  className="touch-target-lg ml-auto w-full rounded-xl bg-astro-orange px-4 text-base font-semibold text-white sm:w-auto"
                 >
                   {t("spotify.continue")}
                 </button>

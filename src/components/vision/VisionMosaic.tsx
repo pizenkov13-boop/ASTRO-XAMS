@@ -11,7 +11,6 @@ export interface VisionImageItem {
   id: string;
   filename: string;
   url: string;
-  label: string;
 }
 
 export function VisionMosaic() {
@@ -91,7 +90,7 @@ export function VisionMosaic() {
         onIndexChange={setLightboxIndex}
       />
 
-      <div className="grid min-h-[calc(100vh-2rem)] w-full auto-rows-[minmax(22vh,1fr)] grid-cols-2 gap-1 md:grid-cols-4 md:gap-1.5 lg:min-h-screen">
+      <div className="grid min-h-[50vh] w-full max-w-[100vw] auto-rows-[minmax(18vh,140px)] grid-cols-2 gap-1 sm:auto-rows-[minmax(20vh,1fr)] md:min-h-[calc(100vh-2rem)] md:grid-cols-4 md:gap-1.5 lg:min-h-screen">
         {images.map((tile, i) => (
           <motion.article
             key={tile.id}
@@ -104,7 +103,7 @@ export function VisionMosaic() {
                 openLightbox(i);
               }
             }}
-            className={`relative cursor-zoom-in overflow-hidden ${mosaicClassForIndex(i)}`}
+            className={`relative min-h-[120px] cursor-zoom-in overflow-hidden touch-manipulation ${mosaicClassForIndex(i)}`}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, amount: 0.1 }}
@@ -123,7 +122,7 @@ export function VisionMosaic() {
               >
                 <Image
                   src={tile.url}
-                  alt={tile.label}
+                  alt=""
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, 25vw"
@@ -133,14 +132,8 @@ export function VisionMosaic() {
               </motion.div>
             </div>
 
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/50" />
-            <div className="pointer-events-none absolute inset-0 bg-black/20 mix-blend-multiply" />
-
-            <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-              <p className="font-display text-sm font-bold uppercase tracking-[0.2em] text-white/90 md:text-base">
-                {tile.label}
-              </p>
-            </div>
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/30" />
+            <div className="pointer-events-none absolute inset-0 bg-black/10 mix-blend-multiply" />
 
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
           </motion.article>

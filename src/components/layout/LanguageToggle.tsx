@@ -10,7 +10,7 @@ export function LanguageToggle() {
     <button
       type="button"
       onClick={() => setLocale(lang)}
-      className={`rounded-full px-2.5 py-1 font-display text-[10px] font-bold tracking-widest transition ${
+      className={`min-h-[44px] min-w-[44px] rounded-full px-3 py-2 font-display text-base font-bold tracking-widest transition touch-manipulation ${
         locale === lang
           ? "bg-astro-orange text-black shadow-neon"
           : "text-gray-500 hover:text-white"

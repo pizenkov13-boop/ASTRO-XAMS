@@ -49,7 +49,7 @@ export function UnitQuizShell({
   };
 
   return (
-    <div className="min-h-screen bg-astro-bg">
+    <div className="min-h-screen overflow-x-hidden bg-astro-bg">
       <StreakBar
         streak={progress.streak}
         xp={progress.xp}
@@ -57,12 +57,15 @@ export function UnitQuizShell({
         dailyCompleted={progress.dailyCompleted}
         dailyGoal={progress.dailyGoal}
       />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <Link href={backHref} className="text-sm text-astro-purple hover:text-astro-orange">
+      <main className="page-shell-narrow max-w-3xl overflow-x-hidden">
+        <Link
+          href={backHref}
+          className="touch-target inline-flex items-center text-base text-astro-purple hover:text-astro-orange"
+        >
           {resolvedBackLabel}
         </Link>
-        <h1 className="mt-4 font-display text-2xl text-white">{unit.title}</h1>
-        <p className="mb-8 text-sm text-gray-500">{unit.description}</p>
+        <h1 className="mt-4 font-display text-xl text-white sm:text-2xl">{unit.title}</h1>
+        <p className="mb-6 text-base text-gray-500 sm:mb-8">{unit.description}</p>
         <QuizSession
           unit={unit}
           progress={progress}

@@ -234,10 +234,10 @@ export function QuizSession({
   const scoreSoFar = Math.round((correctCount / questions.length) * 100);
 
   return (
-    <div className="relative mx-auto max-w-2xl">
+    <div className="relative mx-auto w-full max-w-2xl overflow-x-hidden">
       <QuizEffects flash={flash} shake={shake} wild={wild} adlibLabel={adlibLabel} />
 
-      <div className="mb-4 flex items-center justify-between text-sm">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-base">
         <span className="text-gray-500">
           {t("quiz.question", { current: index + 1, total: questions.length })}
         </span>
@@ -260,22 +260,24 @@ export function QuizSession({
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="rounded-2xl border border-astro-purple/30 bg-astro-card p-6"
+          className="rounded-2xl border border-astro-purple/30 bg-astro-card p-4 sm:p-6"
         >
-          <p className="text-xs uppercase tracking-wider text-astro-purple">
+          <p className="text-base uppercase tracking-wider text-astro-purple">
             {q.type.replace(/_/g, " ")}
           </p>
-          <h2 className="mt-2 font-display text-xl text-white">{q.prompt}</h2>
+          <h2 className="mt-2 font-display text-lg leading-snug text-white sm:text-xl">
+            {q.prompt}
+          </h2>
 
           {q.type === "multiple_choice" && q.options && (
-            <ul className="mt-6 space-y-2">
+            <ul className="mt-6 space-y-3">
               {q.options.map((opt) => (
                 <li key={opt}>
                   <button
                     type="button"
                     disabled={answered}
                     onClick={() => setSelected(opt)}
-                    className={`w-full rounded-lg border px-4 py-3 text-left transition ${
+                    className={`btn-quiz ${
                       selected === opt
                         ? "border-astro-orange bg-astro-orange/20"
                         : "border-astro-surface hover:border-astro-purple/50"
@@ -291,8 +293,8 @@ export function QuizSession({
 
           {(q.type === "fill_blank" || q.type === "sentence_construction") && (
             <textarea
-              className="mt-6 w-full rounded-lg border border-astro-surface bg-astro-bg p-3 text-white focus:border-astro-orange focus:outline-none"
-              rows={q.type === "sentence_construction" ? 3 : 1}
+              className="input-mobile mt-6"
+              rows={q.type === "sentence_construction" ? 3 : 2}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={answered}
@@ -321,12 +323,12 @@ export function QuizSession({
             </p>
           )}
 
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             {!answered ? (
               <button
                 type="button"
                 onClick={() => handleSubmit()}
-                className="rounded-lg bg-gradient-to-r from-astro-orange to-astro-purple px-6 py-2 font-semibold text-white"
+                className="btn-primary w-full sm:w-auto"
               >
                 {t("quiz.submit")}
               </button>
@@ -335,7 +337,7 @@ export function QuizSession({
                 type="button"
                 disabled={!canProceed}
                 onClick={goNext}
-                className="rounded-lg border border-astro-cyan px-6 py-2 text-astro-cyan disabled:opacity-40"
+                className="btn-secondary w-full sm:w-auto"
               >
                 {index + 1 >= questions.length ? t("quiz.finish") : t("quiz.next")}
               </button>

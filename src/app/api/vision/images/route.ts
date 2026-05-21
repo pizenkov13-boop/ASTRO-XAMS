@@ -5,7 +5,6 @@ import {
   isVisionImageFile,
   sortVisionImageFiles,
   visionImageUrl,
-  labelFromFilename,
 } from "@/lib/vision-images";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +25,6 @@ export async function GET() {
       id: `vision-${index}-${filename}`,
       filename,
       url: visionImageUrl(filename),
-      label: labelFromFilename(filename),
     }));
 
     return NextResponse.json({ images, count: images.length });

@@ -28,7 +28,7 @@ export default function VisionPage() {
   const stats = getVisionStats(progress);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen overflow-x-hidden bg-black text-white">
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-[0.06]"
         style={{
@@ -45,7 +45,7 @@ export default function VisionPage() {
         dailyGoal={progress.dailyGoal}
       />
 
-      <header className="relative z-10 px-4 pb-8 pt-10 text-center md:pt-14">
+      <header className="relative z-10 px-4 pb-8 pt-8 text-center sm:pt-10 md:pt-14">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -83,7 +83,7 @@ export default function VisionPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
-          className="mx-auto mt-10 max-w-lg text-xs leading-relaxed text-gray-600 md:text-sm"
+          className="mx-auto mt-10 max-w-lg px-2 text-base leading-relaxed text-gray-600"
         >
           {t("vision.tileHint")}
         </motion.p>
@@ -99,7 +99,7 @@ export default function VisionPage() {
         </p>
         <Link
           href="/"
-          className="mt-5 inline-block border border-astro-orange/60 px-10 py-3 font-display text-xs font-bold tracking-[0.25em] text-astro-orange transition hover:bg-astro-orange hover:text-black"
+          className="touch-target-lg mt-5 inline-flex items-center justify-center border border-astro-orange/60 px-8 py-4 font-display text-base font-bold tracking-[0.2em] text-astro-orange transition hover:bg-astro-orange hover:text-black"
         >
           {t("vision.cta")}
         </Link>
