@@ -6,9 +6,11 @@ import { vocabularyUnits } from "@/data/vocabulary";
 import { UnitList } from "@/components/modules/UnitList";
 import { StreakBar } from "@/components/layout/StreakBar";
 import { useProgress } from "@/hooks/useProgress";
+import { useLocale } from "@/lib/i18n/context";
 import { sortUnitsForStudy } from "@/lib/review-queue";
 
 export default function VocabularyModulePage() {
+  const { t } = useLocale();
   const { progress, hydrated, levelTitle } = useProgress();
   const sortedUnits = useMemo(
     () => sortUnitsForStudy(vocabularyUnits, progress),
@@ -28,12 +30,14 @@ export default function VocabularyModulePage() {
       />
       <main className="mx-auto max-w-6xl px-4 py-8">
         <Link href="/" className="text-sm text-astro-purple hover:text-astro-orange">
-          ← Dashboard
+          {t("common.dashboard")}
         </Link>
         <h1 className="mt-4 font-display text-3xl font-bold text-white">
-          4000 Essential English Words — Book 1
+          {t("vocabulary.pageTitle")}
         </h1>
-        <p className="text-gray-400">{vocabularyUnits.length} units · Due first, then new</p>
+        <p className="text-gray-400">
+          {t("vocabulary.pageSubtitle", { count: vocabularyUnits.length })}
+        </p>
         <UnitList
           units={sortedUnits}
           basePath="/modules/vocabulary"

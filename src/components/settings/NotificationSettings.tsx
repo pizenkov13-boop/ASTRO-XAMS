@@ -10,8 +10,10 @@ import {
   type NotificationSettings,
 } from "@/lib/notifications";
 import { registerServiceWorker, syncStateToServiceWorker } from "@/lib/service-worker";
+import { useLocale } from "@/lib/i18n/context";
 
 export function NotificationSettingsPanel() {
+  const { t } = useLocale();
   const [settings, setSettings] = useState<NotificationSettings>(
     defaultNotificationSettings
   );
@@ -45,23 +47,17 @@ export function NotificationSettingsPanel() {
 
   if (!supported) {
     return (
-      <p className="text-sm text-gray-500">
-        Browser notifications are not supported in this environment.
-      </p>
+      <p className="text-sm text-gray-500">{t("notifications.unsupported")}</p>
     );
   }
 
   return (
     <div className="space-y-4 rounded-xl border border-astro-purple/30 bg-astro-card p-5">
-      <h3 className="font-display text-lg font-semibold text-white">Notifications</h3>
-      <p className="text-sm text-gray-500">
-        Get reminded when SM-2 cards are due and at your daily study time.
-      </p>
+      <h3 className="font-display text-lg font-semibold text-white">{t("notifications.title")}</h3>
+      <p className="text-sm text-gray-500">{t("notifications.hint")}</p>
 
       {permission === "denied" && (
-        <p className="text-sm text-red-400">
-          Notifications are blocked. Enable them in your browser site settings.
-        </p>
+        <p className="text-sm text-red-400">{t("notifications.blocked")}</p>
       )}
 
       {permission !== "granted" ? (
@@ -70,7 +66,7 @@ export function NotificationSettingsPanel() {
           onClick={() => void enableNotifications()}
           className="rounded-lg bg-astro-orange px-4 py-2 text-sm font-semibold text-black"
         >
-          Enable notifications
+          {t("notifications.enable")}
         </button>
       ) : (
         <>
@@ -81,7 +77,7 @@ export function NotificationSettingsPanel() {
               onChange={(e) => update({ enabled: e.target.checked })}
               className="accent-astro-orange"
             />
-            <span>Notifications on</span>
+            <span>{t("notifications.on")}</span>
           </label>
 
           <label className="flex items-center gap-3 text-sm">
@@ -92,7 +88,7 @@ export function NotificationSettingsPanel() {
               onChange={(e) => update({ dueReminders: e.target.checked })}
               className="accent-astro-orange"
             />
-            <span>Remind when review cards are due</span>
+            <span>{t("notifications.dueReminders")}</span>
           </label>
 
           <label className="flex items-center gap-3 text-sm">
@@ -103,11 +99,11 @@ export function NotificationSettingsPanel() {
               onChange={(e) => update({ dailyReminder: e.target.checked })}
               className="accent-astro-orange"
             />
-            <span>Daily study reminder</span>
+            <span>{t("notifications.dailyReminder")}</span>
           </label>
 
           <div>
-            <label className="text-xs text-gray-500">Daily reminder time</label>
+            <label className="text-xs text-gray-500">{t("notifications.dailyTime")}</label>
             <input
               type="time"
               value={settings.dailyTime}

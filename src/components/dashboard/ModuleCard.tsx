@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useLocale } from "@/lib/i18n/context";
 import type { ModuleInfo } from "@/data/modules";
 
 interface ModuleCardProps {
@@ -17,6 +18,7 @@ export function ModuleCard({
   retentionPercent,
   index,
 }: ModuleCardProps) {
+  const { t } = useLocale();
   const progress = Math.round((completedUnits / module.unitCount) * 100);
 
   return (
@@ -42,12 +44,12 @@ export function ModuleCard({
                 {module.level}
               </span>
               <span className="rounded-full bg-astro-surface px-2 py-0.5 text-xs text-gray-400">
-                {module.unitCount} units
+                {t("module.units", { count: module.unitCount })}
               </span>
             </div>
             <div className="mt-4">
               <div className="mb-1 flex justify-between text-xs">
-                <span className="text-gray-500">Galaxy progress</span>
+                <span className="text-gray-500">{t("module.galaxyProgress")}</span>
                 <span className="text-astro-orange">{progress}%</span>
               </div>
               <div className="h-2 rounded-full bg-astro-surface">
@@ -57,7 +59,10 @@ export function ModuleCard({
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                {retentionPercent}% retention · {completedUnits} completed
+                {t("module.retentionCompleted", {
+                  retention: retentionPercent,
+                  completed: completedUnits,
+                })}
               </p>
             </div>
           </div>

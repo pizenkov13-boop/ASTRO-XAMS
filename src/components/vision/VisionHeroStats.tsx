@@ -3,36 +3,38 @@
 import { motion } from "framer-motion";
 import type { VisionStats } from "@/lib/vision-stats";
 import { SAT_TARGET_SCORE } from "@/lib/vision-stats";
+import { useLocale } from "@/lib/i18n/context";
 
 interface VisionHeroStatsProps {
   stats: VisionStats;
 }
 
 export function VisionHeroStats({ stats }: VisionHeroStatsProps) {
+  const { t } = useLocale();
   const items = [
     {
-      label: "Streak",
+      label: t("vision.stats.streak"),
       value: `${stats.streak}`,
-      unit: "days",
+      unit: t("vision.stats.days"),
       pct: undefined,
       accent: "text-astro-orange",
     },
     {
-      label: "Grammar units",
+      label: t("vision.stats.grammar"),
       value: `${stats.grammarCompleted}`,
       unit: `/ ${stats.grammarTotal}`,
       pct: stats.grammarPercent,
       accent: "text-white",
     },
     {
-      label: "SAT trajectory",
+      label: t("vision.stats.sat"),
       value: `${stats.estimatedSatScore}`,
       unit: `→ ${SAT_TARGET_SCORE}`,
       pct: stats.satPercent,
       accent: "text-astro-cyan",
     },
     {
-      label: "4000 Essential Words",
+      label: t("vision.stats.words"),
       value: `${stats.wordsLearned.toLocaleString()}`,
       unit: `/ ${stats.wordsTotal.toLocaleString()}`,
       pct: Math.round((stats.wordsLearned / stats.wordsTotal) * 100),

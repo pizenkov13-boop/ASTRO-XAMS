@@ -9,6 +9,7 @@ import { QuizSession } from "@/components/quiz/QuizSession";
 import { StreakBar } from "@/components/layout/StreakBar";
 import { SpotifyReward } from "@/components/spotify/SpotifyReward";
 import { useProgress } from "@/hooks/useProgress";
+import { useLocale } from "@/lib/i18n/context";
 import { saveProgress } from "@/lib/storage";
 
 interface UnitQuizShellProps {
@@ -20,9 +21,11 @@ interface UnitQuizShellProps {
 export function UnitQuizShell({
   unit,
   backHref,
-  backLabel = "← All units",
+  backLabel,
 }: UnitQuizShellProps) {
+  const { t } = useLocale();
   const router = useRouter();
+  const resolvedBackLabel = backLabel ?? t("common.allUnits");
   const { progress, setProgress, hydrated, levelTitle, onCorrectAnswer, onUnitComplete } =
     useProgress();
   const [showReward, setShowReward] = useState(false);
@@ -56,7 +59,7 @@ export function UnitQuizShell({
       />
       <main className="mx-auto max-w-3xl px-4 py-8">
         <Link href={backHref} className="text-sm text-astro-purple hover:text-astro-orange">
-          {backLabel}
+          {resolvedBackLabel}
         </Link>
         <h1 className="mt-4 font-display text-2xl text-white">{unit.title}</h1>
         <p className="mb-8 text-sm text-gray-500">{unit.description}</p>

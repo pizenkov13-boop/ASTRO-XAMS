@@ -19,8 +19,25 @@ export function getLevelFromXp(xp: number): number {
   return level;
 }
 
-export function getLevelTitle(xp: number): string {
+const LEVEL_TITLE_KEYS = [
+  "level.spaceCadet",
+  "level.orbitRookie",
+  "level.nebulaScout",
+  "level.cosmicScholar",
+  "level.galaxyAce",
+  "level.supernova",
+  "level.blackHoleBrain",
+  "level.quasarKing",
+  "level.universeMaster",
+  "level.satGod",
+] as const;
+
+export function getLevelTitle(
+  xp: number,
+  t?: (key: (typeof LEVEL_TITLE_KEYS)[number]) => string
+): string {
   const level = getLevelFromXp(xp);
+  if (t) return t(LEVEL_TITLE_KEYS[level]);
   return LEVEL_TITLES[level].title;
 }
 

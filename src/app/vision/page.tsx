@@ -7,8 +7,10 @@ import { VisionMosaic } from "@/components/vision/VisionMosaic";
 import { VisionHeroStats } from "@/components/vision/VisionHeroStats";
 import { useProgress } from "@/hooks/useProgress";
 import { getVisionStats } from "@/lib/vision-stats";
+import { useLocale } from "@/lib/i18n/context";
 
 export default function VisionPage() {
+  const { t } = useLocale();
   const { progress, hydrated, levelTitle } = useProgress();
 
   if (!hydrated) {
@@ -49,7 +51,7 @@ export default function VisionPage() {
           animate={{ opacity: 1 }}
           className="text-[10px] font-bold uppercase tracking-[0.4em] text-red-600/90"
         >
-          No excuses
+          {t("vision.noExcuses")}
         </motion.p>
 
         <motion.h1
@@ -59,10 +61,10 @@ export default function VisionPage() {
           className="mx-auto mt-6 max-w-6xl font-display text-[clamp(2.5rem,8vw,6.5rem)] font-black leading-[0.95] tracking-tight"
         >
           <span className="block text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.15)]">
-            Did you forget?
+            {t("vision.line1")}
           </span>
           <span className="mt-2 block bg-gradient-to-r from-astro-orange via-red-500 to-astro-purple bg-clip-text text-transparent">
-            Do it for life.
+            {t("vision.line2")}
           </span>
         </motion.h1>
 
@@ -72,7 +74,7 @@ export default function VisionPage() {
           transition={{ delay: 0.35 }}
           className="mt-6 font-display text-sm tracking-[0.35em] text-gray-500 md:text-base"
         >
-          — Travis Scott
+          {t("vision.quote")}
         </motion.p>
 
         <VisionHeroStats stats={stats} />
@@ -83,9 +85,7 @@ export default function VisionPage() {
           transition={{ delay: 0.9 }}
           className="mx-auto mt-10 max-w-lg text-xs leading-relaxed text-gray-600 md:text-sm"
         >
-          Every tile is a receipt for what happens when you don&apos;t quit.
-          Close this tab when you&apos;re ready to work — not when you&apos;re
-          comfortable.
+          {t("vision.tileHint")}
         </motion.p>
       </header>
 
@@ -95,13 +95,13 @@ export default function VisionPage() {
 
       <footer className="relative z-10 border-t border-white/5 bg-black py-12 text-center">
         <p className="font-display text-lg tracking-wide text-gray-400">
-          You already know what to do.
+          {t("vision.footer")}
         </p>
         <Link
           href="/"
           className="mt-5 inline-block border border-astro-orange/60 px-10 py-3 font-display text-xs font-bold tracking-[0.25em] text-astro-orange transition hover:bg-astro-orange hover:text-black"
         >
-          GET BACK TO WORK
+          {t("vision.cta")}
         </Link>
       </footer>
     </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Unit, UserProgress } from "@/types";
+import { useLocale } from "@/lib/i18n/context";
 import { getUnitBucket } from "@/lib/review-queue";
 
 interface UnitListProps {
@@ -18,19 +19,21 @@ const BUCKET_STYLES = {
   later: "border-astro-purple/20",
 };
 
-const BUCKET_LABELS = {
-  due: { text: "Due", className: "text-astro-orange" },
-  new: { text: "New", className: "text-astro-cyan" },
-  later: { text: "", className: "" },
-};
-
 export function UnitList({ units, basePath, completedIds, progress }: UnitListProps) {
+  const { t } = useLocale();
+
+  const bucketLabels = {
+    due: { text: t("unit.due"), className: "text-astro-orange" },
+    new: { text: t("unit.new"), className: "text-astro-cyan" },
+    later: { text: "", className: "" },
+  };
+
   return (
     <ul className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {units.map((unit, i) => {
         const done = completedIds.includes(unit.id);
         const bucket = getUnitBucket(unit, progress);
-        const label = BUCKET_LABELS[bucket];
+        const label = bucketLabels[bucket];
 
         return (
           <motion.li
@@ -49,7 +52,7 @@ export function UnitList({ units, basePath, completedIds, progress }: UnitListPr
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-astro-purple">
-                  {unit.level} · {unit.questions.length} Q
+                  {unit.level} · {t("unit.questions", { count: unit.questions.length })}
                 </span>
                 {label.text && (
                   <span className={`text-[10px] font-bold uppercase ${label.className}`}>
@@ -60,7 +63,7 @@ export function UnitList({ units, basePath, completedIds, progress }: UnitListPr
               <p className="mt-1 font-medium text-white">{unit.title}</p>
               {done && (
                 <span className="mt-2 inline-block text-xs text-astro-cyan">
-                  ✓ Completed
+                  {t("unit.completed")}
                 </span>
               )}
             </Link>

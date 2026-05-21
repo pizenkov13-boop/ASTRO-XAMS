@@ -1,6 +1,8 @@
 "use client";
 
 import type { UserProgress } from "@/types";
+import { loadLocale } from "@/lib/i18n/locale";
+import { translate } from "@/lib/i18n/translations";
 import { isDue } from "@/lib/sm2";
 
 const SETTINGS_KEY = "astro-xams-notifications-v1";
@@ -97,11 +99,13 @@ export function maybeNotifyDueCards(
   const fourHours = 4 * 60 * 60 * 1000;
   if (now - last < fourHours) return settings;
 
-  void showNotification(
-    "ASTRO'XAMS — Reviews due",
-    `${due} card${due === 1 ? "" : "s"} ready. Knock them out before you forget.`,
-    "astro-due-review"
-  );
+  const locale = loadLocale();
+  const body =
+    due === 1
+      ? translate(locale, "notify.dueBody", { count: due })
+      : translate(locale, "notify.dueBodyPlural", { count: due });
+
+  void showNotification(translate(locale, "notify.dueTitle"), body, "astro-due-review");
 
   return { ...settings, lastDueNotifyAt: new Date().toISOString() };
 }
@@ -123,9 +127,10 @@ export function maybeNotifyDailyReminder(
   const diffMs = now.getTime() - target.getTime();
   if (diffMs < 0 || diffMs > 5 * 60 * 1000) return settings;
 
+  const locale = loadLocale();
   void showNotification(
-    "ASTRO'XAMS — Daily orbit",
-    "Time to study. Grammar, words, SAT — pick one and move.",
+    translate(locale, "notify.dailyTitle"),
+    translate(locale, "notify.dailyBody"),
     "astro-daily"
   );
 

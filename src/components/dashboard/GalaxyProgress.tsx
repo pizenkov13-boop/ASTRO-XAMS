@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLocale } from "@/lib/i18n/context";
 
 interface GalaxyProgressProps {
   label: string;
@@ -15,11 +16,15 @@ export function GalaxyProgress({
   completed,
   total,
 }: GalaxyProgressProps) {
+  const { t } = useLocale();
+
   return (
     <div className="rounded-xl border border-astro-purple/20 bg-astro-card/80 p-4">
       <div className="mb-2 flex justify-between text-sm">
         <span className="text-gray-300">{label}</span>
-        <span className="font-mono text-astro-cyan">{percent}% retention</span>
+        <span className="font-mono text-astro-cyan">
+          {t("galaxy.retention", { percent })}
+        </span>
       </div>
       <div className="relative h-3 overflow-hidden rounded-full bg-astro-surface">
         <motion.div
@@ -39,7 +44,7 @@ export function GalaxyProgress({
         ))}
       </div>
       <p className="mt-2 text-xs text-gray-500">
-        {completed} / {total} units explored
+        {t("galaxy.explored", { completed, total })}
       </p>
     </div>
   );

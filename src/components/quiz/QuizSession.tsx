@@ -8,6 +8,7 @@ import { playRandomAdlib, playCelebration, preloadAdlibs } from "@/lib/adlibs";
 import { createCard, reviewCard } from "@/lib/sm2";
 import { sortQuestionsForSession } from "@/lib/quiz-order";
 import { useTopicExplanation } from "@/hooks/useTopicExplanation";
+import { useLocale } from "@/lib/i18n/context";
 import { QuizEffects } from "./QuizEffects";
 import { RatingButtons } from "./RatingButtons";
 import { TopicExplanation } from "./TopicExplanation";
@@ -48,6 +49,7 @@ export function QuizSession({
   onComplete,
   onCorrect,
 }: QuizSessionProps) {
+  const { t } = useLocale();
   const [explainOpen, setExplainOpen] = useState(false);
 
   const questions = useMemo(() => {
@@ -237,7 +239,7 @@ export function QuizSession({
 
       <div className="mb-4 flex items-center justify-between text-sm">
         <span className="text-gray-500">
-          Question {index + 1} / {questions.length}
+          {t("quiz.question", { current: index + 1, total: questions.length })}
         </span>
         <div className="flex gap-3 font-mono">
           <span className="text-astro-cyan">{scoreSoFar}%</span>
@@ -294,7 +296,7 @@ export function QuizSession({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={answered}
-              placeholder="Type your answer..."
+              placeholder={t("quiz.placeholder")}
             />
           )}
 
@@ -315,7 +317,7 @@ export function QuizSession({
 
           {answered && wasCorrect && rated && (
             <p className="mt-2 text-xs text-gray-500">
-              Scheduled · {rating} · SM-2 updated
+              {t("quiz.scheduled", { rating: rating ?? "" })}
             </p>
           )}
 
@@ -326,7 +328,7 @@ export function QuizSession({
                 onClick={() => handleSubmit()}
                 className="rounded-lg bg-gradient-to-r from-astro-orange to-astro-purple px-6 py-2 font-semibold text-white"
               >
-                Submit
+                {t("quiz.submit")}
               </button>
             ) : (
               <button
@@ -335,7 +337,7 @@ export function QuizSession({
                 onClick={goNext}
                 className="rounded-lg border border-astro-cyan px-6 py-2 text-astro-cyan disabled:opacity-40"
               >
-                {index + 1 >= questions.length ? "Finish unit" : "Next"}
+                {index + 1 >= questions.length ? t("quiz.finish") : t("quiz.next")}
               </button>
             )}
           </div>

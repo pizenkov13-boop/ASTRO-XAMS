@@ -4,6 +4,7 @@ import { AdlibPreloader } from "@/components/layout/AdlibPreloader";
 import { NotificationScheduler } from "@/components/layout/NotificationScheduler";
 import { ServiceWorkerBootstrap } from "@/components/layout/ServiceWorkerBootstrap";
 import { SpotifyTokenHandoff } from "@/components/layout/SpotifyTokenHandoff";
+import { AppProviders } from "@/components/providers/AppProviders";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -28,13 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${spaceGrotesk.variable}`}>
+    <html lang="ru" className={`${orbitron.variable} ${spaceGrotesk.variable}`}>
       <body className="font-body antialiased">
-        <AdlibPreloader />
-        <ServiceWorkerBootstrap />
-        <NotificationScheduler />
-        <SpotifyTokenHandoff />
-        {children}
+        <AppProviders>
+          <AdlibPreloader />
+          <ServiceWorkerBootstrap />
+          <NotificationScheduler />
+          <SpotifyTokenHandoff />
+          {children}
+        </AppProviders>
       </body>
     </html>
   );

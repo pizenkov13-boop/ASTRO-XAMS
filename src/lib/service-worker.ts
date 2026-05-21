@@ -1,6 +1,7 @@
 "use client";
 
 import { loadProgress } from "@/lib/storage";
+import { loadLocale } from "@/lib/i18n/locale";
 import { loadNotificationSettings } from "@/lib/notifications";
 
 const SW_PATH = "/sw.js";
@@ -62,6 +63,7 @@ export async function syncStateToServiceWorker(
   const payload = {
     settings: loadNotificationSettings(),
     progress: loadProgress(),
+    locale: loadLocale(),
     syncedAt: Date.now(),
   };
 

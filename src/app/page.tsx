@@ -6,7 +6,8 @@ import { Starfield } from "@/components/dashboard/Starfield";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
 import { GalaxyProgress } from "@/components/dashboard/GalaxyProgress";
 import { StreakBar } from "@/components/layout/StreakBar";
-import { MODULES } from "@/data/modules";
+import { useLocalizedModules } from "@/hooks/useLocalizedModules";
+import { useLocale } from "@/lib/i18n/context";
 import { grammarUnits } from "@/data/grammar";
 import { vocabularyUnits } from "@/data/vocabulary";
 import { satUnits } from "@/data/sat";
@@ -20,10 +21,12 @@ const UNIT_COUNTS = {
 };
 
 export default function DashboardPage() {
+  const { t } = useLocale();
+  const modules = useLocalizedModules();
   const { progress, hydrated, levelTitle } = useProgress();
   const xpInfo = xpToNextLevel(progress.xp);
 
-  const moduleStats = MODULES.map((m) => {
+  const moduleStats = modules.map((m) => {
     const completed = progress.completedUnits.filter((id) =>
       id.startsWith(m.id === "grammar" ? "grammar" : m.id === "vocabulary" ? "vocab" : "sat")
     ).length;
@@ -67,19 +70,16 @@ export default function DashboardPage() {
         >
           <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
             <span className="bg-gradient-to-r from-astro-orange via-astro-purple to-astro-cyan bg-clip-text text-transparent">
-              Launch Your Learning Orbit
+              {t("dashboard.hero")}
             </span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-gray-400">
-            Three modules. SM-2 spaced repetition. 10+ questions per session.
-            Random ad-libs on every correct answer.
-          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-gray-400">{t("dashboard.subtitle")}</p>
           <div className="mt-6 inline-flex flex-wrap justify-center gap-3">
             <span className="rounded-lg border border-astro-purple/40 bg-astro-card px-4 py-2 text-sm">
               🛸 {levelTitle}
             </span>
             <span className="rounded-lg border border-astro-orange/40 bg-astro-card px-4 py-2 text-sm">
-              Next level: {xpInfo.progress}%
+              {t("dashboard.nextLevel", { percent: xpInfo.progress })}
             </span>
           </div>
         </motion.section>
@@ -125,35 +125,33 @@ export default function DashboardPage() {
           className="mt-12 rounded-2xl border border-astro-cyan/20 bg-astro-card/60 p-6"
         >
           <h3 className="font-display text-lg font-semibold text-astro-cyan">
-            Quick launch
+            {t("dashboard.quickLaunch")}
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Jump into due reviews or start the next unit
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{t("dashboard.quickLaunchHint")}</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link
               href="/modules/grammar"
               className="rounded-lg bg-gradient-to-r from-astro-orange to-astro-purple px-4 py-2 text-sm font-semibold text-white shadow-neon hover:opacity-90"
             >
-              Grammar galaxy →
+              {t("dashboard.grammarGalaxy")}
             </Link>
             <Link
               href="/vision"
               className="rounded-lg border border-astro-orange/50 px-4 py-2 text-sm text-astro-orange hover:bg-astro-orange/10"
             >
-              Vision wall
+              {t("dashboard.visionWall")}
             </Link>
             <Link
               href="/settings"
               className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-400 hover:bg-astro-surface"
             >
-              Notifications
+              {t("dashboard.notifications")}
             </Link>
             <Link
               href="/review"
               className="rounded-lg border border-astro-purple/50 px-4 py-2 text-sm text-astro-purple hover:bg-astro-purple/10"
             >
-              Due reviews
+              {t("dashboard.dueReviews")}
             </Link>
           </div>
         </motion.section>

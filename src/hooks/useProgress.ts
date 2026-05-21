@@ -9,9 +9,11 @@ import {
   updateDailyStreak,
 } from "@/lib/storage";
 import { XP_PER_CORRECT, XP_PER_UNIT_COMPLETE } from "@/types";
+import { useLocale } from "@/lib/i18n/context";
 import { getLevelTitle } from "@/lib/xp";
 
 export function useProgress() {
+  const { t } = useLocale();
   const [progress, setProgress] = useState<UserProgress>(defaultProgress);
   const [hydrated, setHydrated] = useState(false);
 
@@ -63,6 +65,6 @@ export function useProgress() {
     onCorrectAnswer,
     onUnitComplete,
     setDailyGoal,
-    levelTitle: getLevelTitle(progress.xp),
+    levelTitle: getLevelTitle(progress.xp, t),
   };
 }

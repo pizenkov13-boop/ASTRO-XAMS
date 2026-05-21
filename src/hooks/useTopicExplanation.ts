@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useLocale } from "@/lib/i18n/context";
 
 export function useTopicExplanation() {
+  const { locale, t } = useLocale();
   const [explanation, setExplanation] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export function useTopicExplanation() {
         const res = await fetch("/api/explain", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(params),
+          body: JSON.stringify({ ...params, locale }),
         });
         const data = (await res.json()) as {
           explanation?: string;
@@ -30,12 +32,12 @@ export function useTopicExplanation() {
         if (!res.ok) throw new Error(data.error ?? "Failed");
         setExplanation(data.explanation ?? null);
       } catch {
-        setError("Could not load AI explanation. Try again later.");
+        setError(t("quiz.aiError"));
       } finally {
         setLoading(false);
       }
     },
-    []
+    [locale, t]
   );
 
   const reset = useCallback(() => {

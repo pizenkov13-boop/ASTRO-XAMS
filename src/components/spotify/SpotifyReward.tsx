@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Script from "next/script";
 import { SPOTIFY_EXPIRES_KEY, SPOTIFY_TOKEN_KEY } from "@/lib/spotify-pkce";
+import { useLocale } from "@/lib/i18n/context";
 
 interface RewardTrack {
   id: string;
@@ -51,6 +52,7 @@ function getStoredToken(): string | null {
 }
 
 export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProps) {
+  const { t } = useLocale();
   const [track, setTrack] = useState<RewardTrack | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -124,16 +126,14 @@ export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProp
       if (reward.previewUrl) {
         playPreview(reward.previewUrl);
       } else {
-        setError(
-          "No preview for this track. Connect Spotify Premium for full playback."
-        );
+        setError(t("spotify.noPreview"));
       }
     } catch {
-      setError("Could not load your reward track.");
+      setError(t("spotify.error"));
     } finally {
       setLoading(false);
     }
-  }, [initSdkPlayer, playPreview, sdkReady]);
+  }, [initSdkPlayer, playPreview, sdkReady, t]);
 
   useEffect(() => {
     if (open && scorePercent >= 80) {
@@ -170,13 +170,13 @@ export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProp
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
             >
-              <p className="font-display text-lg text-astro-cyan">Mission reward</p>
+              <p className="font-display text-lg text-astro-cyan">{t("spotify.rewardTitle")}</p>
               <p className="mt-1 text-sm text-gray-400">
-                {scorePercent}% — you crushed this unit! 30s preview · Travis Scott or Playboi Carti:
+                {t("spotify.rewardBody", { percent: scorePercent })}
               </p>
 
               {loading && (
-                <p className="mt-4 text-sm text-gray-500">Loading from the cosmos...</p>
+                <p className="mt-4 text-sm text-gray-500">{t("spotify.loading")}</p>
               )}
 
               {error && <p className="mt-4 text-sm text-red-300">{error}</p>}
@@ -195,10 +195,10 @@ export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProp
                     <p className="font-semibold text-white">{track.name}</p>
                     <p className="text-sm text-gray-400">{track.artist}</p>
                     {playbackMode === "sdk" && (
-                      <p className="text-xs text-astro-orange mt-1">Playing via Spotify SDK</p>
+                      <p className="text-xs text-astro-orange mt-1">{t("spotify.sdk")}</p>
                     )}
                     {playbackMode === "preview" && (
-                      <p className="text-xs text-astro-purple mt-1">30s preview</p>
+                      <p className="text-xs text-astro-purple mt-1">{t("spotify.preview")}</p>
                     )}
                   </div>
                 </div>
@@ -209,14 +209,14 @@ export function SpotifyReward({ open, scorePercent, onClose }: SpotifyRewardProp
                   href="/api/spotify/login"
                   className="text-xs text-astro-purple underline"
                 >
-                  Connect Spotify for full playback (Premium)
+                  {t("spotify.connect")}
                 </a>
                 <button
                   type="button"
                   onClick={onClose}
                   className="ml-auto rounded-lg bg-astro-orange px-4 py-2 text-sm font-semibold text-white"
                 >
-                  Continue
+                  {t("spotify.continue")}
                 </button>
               </div>
             </motion.div>

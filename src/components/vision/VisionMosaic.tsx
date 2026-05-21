@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { mosaicClassForIndex } from "@/lib/vision-images";
+import { useLocale } from "@/lib/i18n/context";
+import { VisionLightbox } from "./VisionLightbox";
 
 export interface VisionImageItem {
   id: string;
@@ -13,9 +15,19 @@ export interface VisionImageItem {
 }
 
 export function VisionMosaic() {
+  const { t } = useLocale();
   const [images, setImages] = useState<VisionImageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const openLightbox = useCallback((index: number) => {
+    setLightboxIndex(index);
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -31,14 +43,12 @@ export function VisionMosaic() {
         if (!cancelled) {
           setImages(data.images ?? []);
           setError(
-            (data.images?.length ?? 0) === 0
-              ? "Add images to public/images/vision/ (e.g. img (1).jpg)"
-              : null
+            (data.images?.length ?? 0) === 0 ? t("vision.mosaic.empty") : null
           );
         }
       } catch {
         if (!cancelled) {
-          setError("Could not load vision images.");
+          setError(t("vision.mosaic.error"));
           setImages([]);
         }
       } finally {
@@ -74,11 +84,27 @@ export function VisionMosaic() {
 
   return (
     <section className="relative w-full">
+      <VisionLightbox
+        images={images}
+        index={lightboxIndex}
+        onClose={closeLightbox}
+        onIndexChange={setLightboxIndex}
+      />
+
       <div className="grid min-h-[calc(100vh-2rem)] w-full auto-rows-[minmax(22vh,1fr)] grid-cols-2 gap-1 md:grid-cols-4 md:gap-1.5 lg:min-h-screen">
         {images.map((tile, i) => (
           <motion.article
             key={tile.id}
-            className={`relative overflow-hidden ${mosaicClassForIndex(i)}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => openLightbox(i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openLightbox(i);
+              }
+            }}
+            className={`relative cursor-zoom-in overflow-hidden ${mosaicClassForIndex(i)}`}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, amount: 0.1 }}

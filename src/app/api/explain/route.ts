@@ -12,7 +12,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { topic?: string; question?: string; correctAnswer?: string };
+  let body: {
+    topic?: string;
+    question?: string;
+    correctAnswer?: string;
+    locale?: string;
+  };
   try {
     body = await req.json();
   } catch {
@@ -31,7 +36,17 @@ export async function POST(req: NextRequest) {
     .filter(Boolean)
     .join("\n");
 
-  const systemPrompt = `You are a friendly English tutor. Rules:
+  const locale = body.locale === "ru" ? "ru" : "en";
+
+  const systemPrompt =
+    locale === "ru"
+      ? `Ты дружелюбный репетитор английского. Правила:
+- Объясняй тему так, будто ученику 5 лет. Очень простые слова. Весь ответ ТОЛЬКО на русском языке.
+- Максимум 3 коротких предложения в объяснении.
+- Приведи один смешной пример из жизни.
+- На новой строке напиши «Фишка:» и одну простую подсказку, как запомнить правило.
+- Без списков. Без markdown. Только обычный текст.`
+      : `You are a friendly English tutor. Rules:
 - Explain the topic like the learner is 5 years old. Use very simple words.
 - Maximum 3 short sentences for the explanation.
 - Include one funny real-life example.
@@ -68,9 +83,12 @@ export async function POST(req: NextRequest) {
     const data = (await res.json()) as {
       choices?: { message?: { content?: string } }[];
     };
-    const explanation =
-      data.choices?.[0]?.message?.content?.trim() ||
-      "Think of it like a space rule: we follow the pattern so everyone understands us!";
+    const fallback =
+      locale === "ru"
+        ? "Представь космическое правило: мы следуем шаблону, чтобы все понимали друг друга!"
+        : "Think of it like a space rule: we follow the pattern so everyone understands us!";
+
+    const explanation = data.choices?.[0]?.message?.content?.trim() || fallback;
 
     return NextResponse.json({ explanation });
   } catch (e) {
