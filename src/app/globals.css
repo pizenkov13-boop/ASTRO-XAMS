@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --astro-bg: #0a0a12;
+  --astro-orange: #ff6b2c;
+  --astro-purple: #a855f7;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--astro-bg);
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(168, 85, 247, 0.4);
+  color: #fff;
+}

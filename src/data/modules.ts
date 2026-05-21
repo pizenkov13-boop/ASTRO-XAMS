@@ -1,0 +1,52 @@
+import type { ModuleId } from "@/types";
+
+export interface ModuleInfo {
+  id: ModuleId;
+  title: string;
+  subtitle: string;
+  description: string;
+  unitCount: number;
+  level: string;
+  icon: string;
+  gradient: string;
+  href: string;
+}
+
+export const MODULES: ModuleInfo[] = [
+  {
+    id: "grammar",
+    title: "Essential Grammar in Use",
+    subtitle: "4th Edition · 115 Units",
+    description:
+      "Master A1–B1 grammar from articles to conditionals. Spaced repetition locks each pattern into long-term memory.",
+    unitCount: 115,
+    level: "A1 – B1",
+    icon: "📖",
+    gradient: "from-astro-orange to-astro-pink",
+    href: "/modules/grammar",
+  },
+  {
+    id: "vocabulary",
+    title: "4000 Essential English Words",
+    subtitle: "Book 1 · All Chapters",
+    description:
+      "Core high-frequency vocabulary with context sentences, collocations, and recall drills.",
+    unitCount: 30,
+    level: "A2 – B1",
+    icon: "🔤",
+    gradient: "from-astro-purple to-astro-cyan",
+    href: "/modules/vocabulary",
+  },
+  {
+    id: "sat",
+    title: "SAT Prep",
+    subtitle: "Math + Reading/Writing → 1600",
+    description:
+      "Zero to hero: algebra, data, rhetoric, and grammar for a perfect score trajectory.",
+    unitCount: 48,
+    level: "Zero → 1600",
+    icon: "🎯",
+    gradient: "from-astro-cyan to-astro-orange",
+    href: "/modules/sat",
+  },
+];
