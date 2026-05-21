@@ -104,9 +104,11 @@ export function MainNav() {
           onClick={() => setMenuOpen((o) => !o)}
           className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-astro-purple/40 bg-astro-surface text-white touch-manipulation"
           aria-expanded={menuOpen}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label={menuOpen ? t("nav.menuClose") : t("nav.menuOpen")}
         >
-          <span className="sr-only">{menuOpen ? "Close" : "Menu"}</span>
+          <span className="sr-only">
+            {menuOpen ? t("nav.menuClose") : t("nav.menu")}
+          </span>
           <svg
             className="h-6 w-6"
             fill="none"
@@ -133,7 +135,7 @@ export function MainNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[60] bg-black/70 md:hidden touch-manipulation"
-              aria-label="Close menu"
+              aria-label={t("nav.menuClose")}
               onClick={() => setMenuOpen(false)}
             />
             <motion.nav

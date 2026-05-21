@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Question, ReviewQuality, Unit, UserProgress } from "@/types";
+import type { Question, QuestionType, ReviewQuality, Unit, UserProgress } from "@/types";
 import type { QuizResult } from "@/types/quiz";
 import { playRandomAdlib, playCelebration, preloadAdlibs } from "@/lib/adlibs";
 import { createCard, reviewCard } from "@/lib/sm2";
 import { sortQuestionsForSession } from "@/lib/quiz-order";
 import { useTopicExplanation } from "@/hooks/useTopicExplanation";
 import { useLocale } from "@/lib/i18n/context";
+import { localizeQuizPrompt } from "@/lib/i18n/quiz-prompts";
+import type { TranslationKey } from "@/lib/i18n/translations";
 import { QuizEffects } from "./QuizEffects";
 import { RatingButtons } from "./RatingButtons";
 import { TopicExplanation } from "./TopicExplanation";
@@ -34,6 +36,25 @@ function formatCorrectAnswer(q: Question): string {
   return Array.isArray(c) ? c[0] : c;
 }
 
+function isCorrectOption(opt: string, q: Question): boolean {
+  const c = q.correctAnswer;
+  if (Array.isArray(c)) return c.includes(opt);
+  return c === opt;
+}
+
+const QUESTION_TYPE_KEYS: Record<QuestionType, TranslationKey> = {
+  multiple_choice: "quiz.type.multipleChoice",
+  fill_blank: "quiz.type.fillBlank",
+  sentence_construction: "quiz.type.sentenceConstruction",
+};
+
+const RATING_LABEL_KEYS: Record<ReviewQuality, TranslationKey> = {
+  wrong: "quiz.rating.wrong",
+  hard: "quiz.rating.hard",
+  good: "quiz.rating.good",
+  easy: "quiz.rating.easy",
+};
+
 interface QuizSessionProps {
   unit: Unit;
   progress: UserProgress;
@@ -49,8 +70,9 @@ export function QuizSession({
   onComplete,
   onCorrect,
 }: QuizSessionProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [explainOpen, setExplainOpen] = useState(false);
+  const skipTimeoutRef = useRef(true);
 
   const questions = useMemo(() => {
     const pool = [...unit.questions];
@@ -71,6 +93,7 @@ export function QuizSession({
   const [wild, setWild] = useState(false);
   const [adlibLabel, setAdlibLabel] = useState<string | undefined>();
   const [answered, setAnswered] = useState(false);
+  const [hasPickedChoice, setHasPickedChoice] = useState(false);
   const [wasCorrect, setWasCorrect] = useState(false);
   const [rated, setRated] = useState(false);
   const [rating, setRating] = useState<ReviewQuality | null>(null);
@@ -91,20 +114,25 @@ export function QuizSession({
     void preloadAdlibs();
   }, []);
 
+  // Reset timer whenever the active question changes (must run before countdown)
+  useEffect(() => {
+    setTimeLeft(q.timeLimitSec);
+    skipTimeoutRef.current = true;
+    const id = window.setTimeout(() => {
+      skipTimeoutRef.current = false;
+    }, 150);
+    return () => window.clearTimeout(id);
+  }, [q.id, q.timeLimitSec]);
+
   useEffect(() => {
     if (answered) return;
-    setTimeLeft(q.timeLimitSec);
-    const t = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(t);
-          return 0;
-        }
-        return prev - 1;
-      });
+
+    const intervalId = window.setInterval(() => {
+      setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
-    return () => clearInterval(t);
-  }, [index, q.timeLimitSec, answered]);
+
+    return () => window.clearInterval(intervalId);
+  }, [q.id, answered]);
 
   const applySm2 = useCallback(
     (quality: ReviewQuality, cardId: string) => {
@@ -125,17 +153,24 @@ export function QuizSession({
   );
 
   const handleSubmit = useCallback(
-    (timedOut = false) => {
+    (timedOut = false, choiceOverride?: string) => {
       if (answered) return;
+
+      const picked =
+        q.type === "multiple_choice" ? (choiceOverride ?? selected ?? "") : input;
+
+      if (q.type === "multiple_choice" && choiceOverride !== undefined) {
+        setSelected(choiceOverride);
+        setHasPickedChoice(true);
+      }
+
       setAnswered(true);
 
-      const userAnswer =
-        q.type === "multiple_choice" ? (selected ?? "") : input;
       const correct =
         !timedOut &&
         (q.type === "multiple_choice"
-          ? selected === q.correctAnswer
-          : checkAnswer(q, userAnswer));
+          ? isCorrectOption(picked, q)
+          : checkAnswer(q, picked));
 
       setWasCorrect(correct);
       const cardId = `${unit.id}-${q.id}`;
@@ -183,10 +218,15 @@ export function QuizSession({
   );
 
   useEffect(() => {
-    if (timeLeft === 0 && !answered) {
+    if (timeLeft === 0 && !answered && !skipTimeoutRef.current) {
       handleSubmit(true);
     }
   }, [timeLeft, answered, handleSubmit]);
+
+  const handleMcChoice = (opt: string) => {
+    if (answered) return;
+    handleSubmit(false, opt);
+  };
 
   const handleRate = (quality: ReviewQuality) => {
     if (!pendingCardId || rated) return;
@@ -207,7 +247,8 @@ export function QuizSession({
   };
 
   const goNext = () => {
-    const isLast = index + 1 >= questions.length;
+    const nextIndex = index + 1;
+    const isLast = nextIndex >= questions.length;
     if (isLast) {
       const total = questions.length;
       const correct = correctCount;
@@ -218,20 +259,26 @@ export function QuizSession({
       });
       return;
     }
-    setIndex((i) => i + 1);
+    const nextQ = questions[nextIndex];
+    setIndex(nextIndex);
     setInput("");
     setSelected(null);
     setAnswered(false);
+    setHasPickedChoice(false);
     setWasCorrect(false);
     setRated(false);
     setRating(null);
     setPendingCardId(null);
     setExplainOpen(false);
+    setTimeLeft(nextQ.timeLimitSec);
     resetAi();
   };
 
   const timerPct = (timeLeft / q.timeLimitSec) * 100;
   const scoreSoFar = Math.round((correctCount / questions.length) * 100);
+  const showMcFeedback = answered && hasPickedChoice;
+  const displayPrompt = localizeQuizPrompt(q.prompt, locale);
+  const ratingLabel = rating ? t(RATING_LABEL_KEYS[rating]) : "";
 
   return (
     <div className="relative mx-auto w-full max-w-2xl overflow-x-hidden">
@@ -260,46 +307,80 @@ export function QuizSession({
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="rounded-2xl border border-astro-purple/30 bg-astro-card p-4 sm:p-6"
+          className="relative z-10 rounded-2xl border border-astro-purple/30 bg-astro-card p-4 sm:p-6"
         >
           <p className="text-base uppercase tracking-wider text-astro-purple">
-            {q.type.replace(/_/g, " ")}
+            {t(QUESTION_TYPE_KEYS[q.type])}
           </p>
           <h2 className="mt-2 font-display text-lg leading-snug text-white sm:text-xl">
-            {q.prompt}
+            {displayPrompt}
           </h2>
 
           {q.type === "multiple_choice" && q.options && (
             <ul className="mt-6 space-y-3">
-              {q.options.map((opt) => (
-                <li key={opt}>
-                  <button
-                    type="button"
-                    disabled={answered}
-                    onClick={() => setSelected(opt)}
-                    className={`btn-quiz ${
-                      selected === opt
-                        ? "border-astro-orange bg-astro-orange/20"
-                        : "border-astro-surface hover:border-astro-purple/50"
-                    } ${answered && opt === q.correctAnswer ? "border-green-500/50" : ""}
-                    ${answered && selected === opt && opt !== q.correctAnswer ? "border-red-500/50" : ""}`}
-                  >
-                    {opt}
-                  </button>
-                </li>
-              ))}
+              {q.options.map((opt) => {
+                const isCorrect = isCorrectOption(opt, q);
+                const isPicked = selected === opt;
+                return (
+                  <li key={opt}>
+                    <button
+                      type="button"
+                      disabled={answered}
+                      onClick={() => handleMcChoice(opt)}
+                      className={`btn-quiz ${
+                        showMcFeedback && isCorrect
+                          ? "border-green-500 bg-green-500/20"
+                          : showMcFeedback && isPicked && !isCorrect
+                            ? "border-red-500 bg-red-500/20"
+                            : !answered && isPicked
+                              ? "border-astro-orange bg-astro-orange/20"
+                              : "border-astro-surface hover:border-astro-purple/50"
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           )}
 
-          {(q.type === "fill_blank" || q.type === "sentence_construction") && (
-            <textarea
-              className="input-mobile mt-6"
-              rows={q.type === "sentence_construction" ? 3 : 2}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={answered}
-              placeholder={t("quiz.placeholder")}
-            />
+          {q.type === "fill_blank" && (
+            <div className="relative z-10 mt-6">
+              <input
+                type="text"
+                className="input-mobile"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !answered && input.trim()) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
+                disabled={answered}
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                placeholder={t("quiz.placeholder")}
+                aria-label={t("quiz.placeholder")}
+              />
+            </div>
+          )}
+
+          {q.type === "sentence_construction" && (
+            <div className="relative z-10 mt-6">
+              <textarea
+                className="input-mobile min-h-[120px] resize-y"
+                rows={3}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={answered}
+                autoComplete="off"
+                placeholder={t("quiz.placeholder")}
+                aria-label={t("quiz.placeholder")}
+              />
+            </div>
           )}
 
           {answered && !wasCorrect && (
@@ -319,12 +400,12 @@ export function QuizSession({
 
           {answered && wasCorrect && rated && (
             <p className="mt-2 text-xs text-gray-500">
-              {t("quiz.scheduled", { rating: rating ?? "" })}
+              {t("quiz.scheduled", { rating: ratingLabel })}
             </p>
           )}
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            {!answered ? (
+            {!answered && q.type !== "multiple_choice" ? (
               <button
                 type="button"
                 onClick={() => handleSubmit()}
@@ -332,6 +413,8 @@ export function QuizSession({
               >
                 {t("quiz.submit")}
               </button>
+            ) : !answered && q.type === "multiple_choice" ? (
+              <p className="text-sm text-gray-500">{t("quiz.pickAnswer")}</p>
             ) : (
               <button
                 type="button"

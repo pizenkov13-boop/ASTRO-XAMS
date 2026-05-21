@@ -180,7 +180,7 @@ export function VisionLightbox({
               </p>
               {images.length > 1 && (
                 <p className="mt-2 text-base text-white/40 sm:hidden">
-                  ← swipe →
+                  {t("vision.lightbox.swipe")}
                 </p>
               )}
             </div>

@@ -100,6 +100,10 @@ export const translations = {
     "sat.pageSubtitle": "{count} lessons · Due first, then new",
 
     "quiz.question": "Question {current} / {total}",
+    "quiz.type.multipleChoice": "Multiple choice",
+    "quiz.type.fillBlank": "Fill in the blank",
+    "quiz.type.sentenceConstruction": "Sentence construction",
+    "quiz.pickAnswer": "Tap your answer",
     "quiz.submit": "Submit",
     "quiz.next": "Next",
     "quiz.finish": "Finish unit",
@@ -116,6 +120,19 @@ export const translations = {
     "quiz.rating.goodHint": "SM-2 ladder",
     "quiz.rating.easy": "Easy",
     "quiz.rating.easyHint": "×2.5 interval",
+    "quiz.rating.wrong": "Wrong",
+
+    "common.back": "Back",
+    "common.notFound.unit": "Unit not found",
+    "common.notFound.lesson": "Lesson not found",
+    "common.backToGrammar": "Back to grammar",
+    "common.allLessons": "← All lessons",
+
+    "nav.menuOpen": "Open menu",
+    "nav.menuClose": "Close menu",
+    "nav.menu": "Menu",
+
+    "vision.lightbox.swipe": "← swipe →",
 
     "spotify.rewardTitle": "Mission reward",
     "spotify.rewardBody":
@@ -242,7 +259,7 @@ export const translations = {
     "notifications.dailyReminder": "Ежедневное напоминание учиться",
     "notifications.dailyTime": "Время ежедневного напоминания",
 
-    "unit.due": "Due",
+    "unit.due": "Пора",
     "unit.new": "Новый",
     "unit.completed": "✓ Пройден",
     "unit.questions": "{count} вопр.",
@@ -257,6 +274,10 @@ export const translations = {
     "sat.pageSubtitle": "{count} уроков · сначала due, потом новые",
 
     "quiz.question": "Вопрос {current} / {total}",
+    "quiz.type.multipleChoice": "Выбор ответа",
+    "quiz.type.fillBlank": "Заполните пропуск",
+    "quiz.type.sentenceConstruction": "Построение предложения",
+    "quiz.pickAnswer": "Нажми на ответ",
     "quiz.submit": "Ответить",
     "quiz.next": "Далее",
     "quiz.finish": "Завершить юнит",
@@ -273,6 +294,19 @@ export const translations = {
     "quiz.rating.goodHint": "лестница SM-2",
     "quiz.rating.easy": "Легко",
     "quiz.rating.easyHint": "интервал ×2.5",
+    "quiz.rating.wrong": "Ошибка",
+
+    "common.back": "Назад",
+    "common.notFound.unit": "Юнит не найден",
+    "common.notFound.lesson": "Урок не найден",
+    "common.backToGrammar": "Назад к грамматике",
+    "common.allLessons": "← Все уроки",
+
+    "nav.menuOpen": "Открыть меню",
+    "nav.menuClose": "Закрыть меню",
+    "nav.menu": "Меню",
+
+    "vision.lightbox.swipe": "← свайп →",
 
     "spotify.rewardTitle": "Награда за миссию",
     "spotify.rewardBody":
