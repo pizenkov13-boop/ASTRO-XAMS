@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
 
+const OGE_MATH_SYSTEM_PROMPT = `You are a precise math tutor. When explaining a solution:
+1. State the key theorem or rule used (1 sentence)
+2. Show the calculation step by step, each step on new line
+3. State the final answer clearly
+4. Maximum 5 steps total
+Never make calculation errors. Double-check your arithmetic before responding.
+If the question involves geometry, cite the specific theorem (e.g. 'sum of angles in triangle = 180°').
+Answer in Russian.`;
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
@@ -39,38 +48,9 @@ export async function POST(req: NextRequest) {
 
   const locale = body.locale === "ru" ? "ru" : "en";
   const isOgeMath = body.moduleId === "oge";
-  const ogeContext = `${topic} ${question}`.toLowerCase();
-  const isOgeTriangles =
-    /треугольник|угол|медиан|биссектр|катет|гипотенуз|площад|sin|cos|tg|√|пифагор/i.test(
-      ogeContext
-    );
 
   const systemPrompt = isOgeMath
-    ? locale === "ru"
-      ? isOgeTriangles
-        ? `Ты репетитор математики для ОГЭ (9 класс), тема — геометрия треугольников. Правила:
-- Назови нужную формулу (сумма углов, медиана, биссектриса, площадь S=½ab·sin C, Пифагор, sin/cos/tg в прямоугольном треугольнике).
-- Покажи подстановку чисел из задачи в 2–3 коротких шага.
-- Весь ответ ТОЛЬКО на русском. Без markdown и списков.
-- Максимум 4 коротких предложения.
-- На новой строке: «Фишка:» — одна подсказка, как не ошибиться в похожих задачах.`
-        : `Ты репетитор математики для ОГЭ (9 класс). Правила:
-- Объясни, какую формулу использовать (арифметическая или геометрическая прогрессия, сумма Sₙ, n-й член aₙ).
-- Покажи подстановку чисел из задачи в 2–3 коротких шага.
-- Весь ответ ТОЛЬКО на русском. Без markdown и списков.
-- Максимум 4 коротких предложения.
-- На новой строке: «Фишка:» — одна подсказка, как не перепутать с другой прогрессией.`
-      : isOgeTriangles
-        ? `You are an OGE math tutor (grade 9), topic: triangle geometry. Rules:
-- Name the formula (angle sum, median, bisector, area, Pythagoras, sin/cos/tan).
-- Show substitution in 2–3 short steps.
-- Max 4 short sentences. Plain text only.
-- New line: "Trick:" — one tip for similar problems.`
-        : `You are an OGE math tutor (grade 9). Rules:
-- Name the formula (arithmetic/geometric progression, Sₙ or aₙ).
-- Show substitution in 2–3 short steps.
-- Max 4 short sentences. Plain text only.
-- New line: "Trick:" — one tip to avoid mixing progression types.`
+    ? OGE_MATH_SYSTEM_PROMPT
     : locale === "ru"
       ? `Ты дружелюбный репетитор английского. Правила:
 - Объясняй тему так, будто ученику 5 лет. Очень простые слова. Весь ответ ТОЛЬКО на русском языке.
@@ -94,8 +74,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: MODEL,
-        temperature: 0.8,
-        max_tokens: 180,
+        temperature: isOgeMath ? 0.4 : 0.8,
+        max_tokens: isOgeMath ? 400 : 180,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent },
@@ -115,8 +95,9 @@ export async function POST(req: NextRequest) {
     const data = (await res.json()) as {
       choices?: { message?: { content?: string } }[];
     };
-    const fallback =
-      locale === "ru"
+    const fallback = isOgeMath
+      ? "Проверь формулу из условия, подставь числа по шагам и сверь ответ с правильным."
+      : locale === "ru"
         ? "Представь космическое правило: мы следуем шаблону, чтобы все понимали друг друга!"
         : "Think of it like a space rule: we follow the pattern so everyone understands us!";
 
