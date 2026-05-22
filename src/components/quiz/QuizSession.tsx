@@ -139,10 +139,6 @@ export function QuizSession({
 }: QuizSessionProps) {
   const { t, locale } = useLocale();
   const { refresh: refreshStudyTimer } = useStudyTimer();
-  const [explainOpen, setExplainOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const allowTimeoutRef = useRef(false);
 
   /** Freeze question order for the session so progress updates do not reshuffle mid-quiz. */
   const [questions] = useState(() => {
@@ -155,6 +151,10 @@ export function QuizSession({
   });
   const prevTimeLeftRef = useRef(questions[0]?.timeLimitSec ?? 30);
 
+  const [explainOpen, setExplainOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const allowTimeoutRef = useRef(false);
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
