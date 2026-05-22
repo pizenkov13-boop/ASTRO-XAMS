@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { mosaicClassForIndex } from "@/lib/vision-images";
 import { useLocale } from "@/lib/i18n/context";
 import { VisionLightbox } from "./VisionLightbox";
@@ -59,16 +58,12 @@ export function VisionMosaic() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
-      <section className="flex min-h-[50vh] items-center justify-center">
-        <motion.div
-          className="h-10 w-10 rounded-full border-2 border-astro-orange border-t-transparent"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        />
+      <section className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+        <p className="text-sm text-gray-500">{t("vision.mosaic.loading")}</p>
       </section>
     );
   }
@@ -92,7 +87,7 @@ export function VisionMosaic() {
 
       <div className="grid min-h-[50vh] w-full max-w-[100vw] auto-rows-[minmax(18vh,140px)] grid-cols-2 gap-1 sm:auto-rows-[minmax(20vh,1fr)] md:min-h-[calc(100vh-2rem)] md:grid-cols-4 md:gap-1.5 lg:min-h-screen">
         {images.map((tile, i) => (
-          <motion.article
+          <article
             key={tile.id}
             role="button"
             tabIndex={0}
@@ -104,22 +99,9 @@ export function VisionMosaic() {
               }
             }}
             className={`relative min-h-[120px] cursor-zoom-in overflow-hidden touch-manipulation ${mosaicClassForIndex(i)}`}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.6, delay: Math.min(i * 0.04, 0.4) }}
           >
             <div className="absolute inset-0 overflow-hidden">
-              <motion.div
-                className="relative h-full w-full"
-                animate={{ scale: [1, 1.14] }}
-                transition={{
-                  duration: 18 + (i % 4) * 3,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "linear",
-                }}
-              >
+              <div className="relative h-full w-full">
                 <Image
                   src={tile.url}
                   alt=""
@@ -129,14 +111,14 @@ export function VisionMosaic() {
                   priority={i < 4}
                   unoptimized={tile.url.endsWith(".svg")}
                 />
-              </motion.div>
+              </div>
             </div>
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/30" />
             <div className="pointer-events-none absolute inset-0 bg-black/10 mix-blend-multiply" />
 
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
-          </motion.article>
+          </article>
         ))}
       </div>
     </section>

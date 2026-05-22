@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     question?: string;
     correctAnswer?: string;
     locale?: string;
+    moduleId?: string;
   };
   try {
     body = await req.json();
@@ -37,9 +38,22 @@ export async function POST(req: NextRequest) {
     .join("\n");
 
   const locale = body.locale === "ru" ? "ru" : "en";
+  const isOgeMath = body.moduleId === "oge";
 
-  const systemPrompt =
-    locale === "ru"
+  const systemPrompt = isOgeMath
+    ? locale === "ru"
+      ? `Ты репетитор математики для ОГЭ (9 класс). Правила:
+- Объясни, какую формулу использовать (арифметическая или геометрическая прогрессия, сумма Sₙ, n-й член aₙ).
+- Покажи подстановку чисел из задачи в 2–3 коротких шага.
+- Весь ответ ТОЛЬКО на русском. Без markdown и списков.
+- Максимум 4 коротких предложения.
+- На новой строке: «Фишка:» — одна подсказка, как не перепутать с другой прогрессией.`
+      : `You are an OGE math tutor (grade 9). Rules:
+- Name the formula (arithmetic/geometric progression, Sₙ or aₙ).
+- Show substitution in 2–3 short steps.
+- Max 4 short sentences. Plain text only.
+- New line: "Trick:" — one tip to avoid mixing progression types.`
+    : locale === "ru"
       ? `Ты дружелюбный репетитор английского. Правила:
 - Объясняй тему так, будто ученику 5 лет. Очень простые слова. Весь ответ ТОЛЬКО на русском языке.
 - Максимум 3 коротких предложения в объяснении.

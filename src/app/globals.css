@@ -84,3 +84,21 @@ textarea {
 button {
   font-size: inherit;
 }
+
+@keyframes astro-flame-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(255, 107, 0, 0.55));
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.92;
+    filter: drop-shadow(0 0 10px rgba(255, 107, 0, 0.85));
+    transform: scale(1.08);
+  }
+}
+
+.astro-icon-flame-pulse {
+  animation: astro-flame-pulse 2s ease-in-out infinite;
+}

@@ -5,6 +5,7 @@ export const translations = {
     "nav.home": "HOME",
     "nav.vision": "VISION",
     "nav.review": "REVIEW",
+    "nav.stats": "STATS",
     "nav.settings": "SETTINGS",
     "lang.ru": "RU",
     "lang.en": "EN",
@@ -13,6 +14,12 @@ export const translations = {
     "streak.level": "Level",
     "streak.xp": "XP",
     "streak.dailyGoal": "Daily goal",
+    "streak.dailyGoalShort": "Goal",
+
+    "timer.today": "Today: {time}",
+    "timer.todayShort": "Today: {time}",
+
+    "dashboard.weeklyStudy": "This week: {time}",
 
     "dashboard.hero": "Launch Your Learning Orbit",
     "dashboard.subtitle":
@@ -21,9 +28,11 @@ export const translations = {
     "dashboard.quickLaunch": "Quick launch",
     "dashboard.quickLaunchHint": "Jump into due reviews or start the next unit",
     "dashboard.grammarGalaxy": "Grammar galaxy →",
+    "dashboard.ogeMath": "ОГЭ Math",
     "dashboard.visionWall": "Vision wall",
     "dashboard.notifications": "Notifications",
     "dashboard.dueReviews": "Due reviews",
+    "vision.lightbox.imageOf": "Vision image {current} of {total}",
 
     "galaxy.retention": "{percent}% retention",
     "galaxy.explored": "{completed} / {total} units explored",
@@ -49,6 +58,12 @@ export const translations = {
     "module.sat.description":
       "Zero to hero: algebra, data, rhetoric, and grammar for a perfect score trajectory.",
     "module.sat.level": "Zero → 1600",
+
+    "module.oge.title": "ОГЭ Математика",
+    "module.oge.subtitle": "Progressions · 30 problems",
+    "module.oge.description":
+      "Arithmetic and geometric progressions for OGE: rows, sums, motion, growth and decay.",
+    "module.oge.level": "OGE Grade 9",
 
     "level.spaceCadet": "Space Cadet",
     "level.orbitRookie": "Orbit Rookie",
@@ -99,6 +114,11 @@ export const translations = {
     "sat.pageTitle": "SAT Prep",
     "sat.pageSubtitle": "{count} lessons · Due first, then new",
 
+    "oge.pageTitle": "ОГЭ Математика",
+    "oge.pageSubtitle": "{count} units · Due first, then new · fill-in answers",
+
+    "common.backToOge": "Back to ОГЭ Math",
+
     "quiz.question": "Question {current} / {total}",
     "quiz.type.multipleChoice": "Multiple choice",
     "quiz.type.fillBlank": "Fill in the blank",
@@ -121,6 +141,17 @@ export const translations = {
     "quiz.rating.easy": "Easy",
     "quiz.rating.easyHint": "×2.5 interval",
     "quiz.rating.wrong": "Wrong",
+
+    "chat.open": "Open ASTRO AI tutor",
+    "chat.title": "ASTRO",
+    "chat.subtitle": "English · SAT · IELTS 7.0",
+    "chat.close": "Close chat",
+    "chat.placeholder": "Ask ASTRO anything…",
+    "chat.send": "Send",
+    "chat.welcome":
+      "Hi! I'm ASTRO — your space tutor for English, SAT, and IELTS. Ask about grammar, words, or exam tips. I'll answer in Russian unless you write in English.",
+    "chat.thinking": "ASTRO is thinking…",
+    "chat.error": "Could not reach ASTRO. Check your connection and try again.",
 
     "common.back": "Back",
     "common.notFound.unit": "Unit not found",
@@ -172,11 +203,32 @@ export const translations = {
     "notify.dueBodyPlural": "{count} cards ready. Knock them out before you forget.",
     "notify.dailyTitle": "ASTRO'XAMS — Daily orbit",
     "notify.dailyBody": "Time to study. Grammar, words, SAT — pick one and move.",
+
+    "stats.title": "Statistics",
+    "stats.subtitle": "Study time, activity, retention, and exam countdowns",
+    "stats.heatmapTitle": "Study activity",
+    "stats.heatmapHint": "Last 12 weeks · green = studied that day",
+    "stats.less": "Less",
+    "stats.more": "Studied",
+    "stats.weeklyQuestionsTitle": "Questions this week",
+    "stats.weeklyQuestionsHint": "Answered per day (Mon–Sun)",
+    "stats.retentionTitle": "Retention by module",
+    "stats.retentionHint": "SM-2 cards not due yet ÷ all reviewed cards",
+    "stats.moduleGrammar": "Grammar",
+    "stats.moduleVocabulary": "Vocabulary",
+    "stats.moduleSat": "SAT",
+    "stats.moduleOge": "ОГЭ Math",
+    "stats.ieltsLabel": "IELTS",
+    "stats.ieltsDate": "June 2027",
+    "stats.satLabel": "SAT",
+    "stats.satDate": "August 2027",
+    "stats.daysLeft": "{count} days",
   },
   ru: {
     "nav.home": "ГЛАВНАЯ",
     "nav.vision": "ВИДЕНИЕ",
     "nav.review": "ПОВТОР",
+    "nav.stats": "СТАТ",
     "nav.settings": "НАСТРОЙКИ",
     "lang.ru": "RU",
     "lang.en": "EN",
@@ -185,17 +237,25 @@ export const translations = {
     "streak.level": "Уровень",
     "streak.xp": "Опыт",
     "streak.dailyGoal": "Цель на день",
+    "streak.dailyGoalShort": "Цель",
+
+    "timer.today": "Сегодня: {time}",
+    "timer.todayShort": "Сегодня: {time}",
+
+    "dashboard.weeklyStudy": "За неделю: {time}",
 
     "dashboard.hero": "Запусти орбиту обучения",
     "dashboard.subtitle":
       "Три модуля. Интервальное повторение SM-2. 10+ вопросов за сессию. Случайные ад-libs за каждый правильный ответ.",
     "dashboard.nextLevel": "До след. уровня: {percent}%",
     "dashboard.quickLaunch": "Быстрый старт",
-    "dashboard.quickLaunchHint": "Повтори due-карточки или начни следующий юнит",
+    "dashboard.quickLaunchHint": "Повтори карточки к сроку или начни следующий юнит",
     "dashboard.grammarGalaxy": "Грамматика →",
+    "dashboard.ogeMath": "ОГЭ Математика",
     "dashboard.visionWall": "Стена видения",
     "dashboard.notifications": "Уведомления",
-    "dashboard.dueReviews": "Due-повторы",
+    "dashboard.dueReviews": "Повторы к изучению",
+    "vision.lightbox.imageOf": "Изображение {current} из {total}",
 
     "galaxy.retention": "Удержание {percent}%",
     "galaxy.explored": "{completed} / {total} юнитов пройдено",
@@ -222,6 +282,12 @@ export const translations = {
       "С нуля до максимума: алгебра, данные, риторика и грамматика для траектории на 1600.",
     "module.sat.level": "0 → 1600",
 
+    "module.oge.title": "ОГЭ Математика",
+    "module.oge.subtitle": "Прогрессии · 30 задач",
+    "module.oge.description":
+      "Арифметическая и геометрическая прогрессии для ОГЭ: ряды, суммы, движение, рост и распад.",
+    "module.oge.level": "ОГЭ 9 класс",
+
     "level.spaceCadet": "Космический кадет",
     "level.orbitRookie": "Новичок орбиты",
     "level.nebulaScout": "Разведчик туманности",
@@ -238,24 +304,24 @@ export const translations = {
     "common.loading": "Загрузка…",
 
     "review.title": "Очередь учёбы",
-    "review.subtitle": "Сначала due-повторы, потом новый материал — SM-2",
+    "review.subtitle": "Сначала повторы к сроку, потом новый материал — SM-2",
     "review.empty": "Пока нет юнитов. Начни с модуля на главной!",
-    "review.dueNow": "Сейчас due ({count})",
+    "review.dueNow": "К повтору сейчас ({count})",
     "review.newMaterial": "Новый материал ({count})",
     "review.caughtUp":
-      "Всё повторено! Загляни, когда карточки снова станут due, или открой любой юнит в модуле.",
+      "Всё повторено! Загляни, когда карточки снова подойдут к сроку, или открой любой юнит в модуле.",
 
     "settings.title": "Настройки",
 
     "notifications.title": "Уведомления",
     "notifications.hint":
-      "Напоминания, когда карточки SM-2 due, и в выбранное время для ежедневной учёбы.",
+      "Напоминания, когда карточки SM-2 подходят к повтору, и в выбранное время для ежедневной учёбы.",
     "notifications.unsupported": "Уведомления браузера здесь недоступны.",
     "notifications.blocked":
       "Уведомления заблокированы. Включи их в настройках сайта в браузере.",
     "notifications.enable": "Включить уведомления",
     "notifications.on": "Уведомления включены",
-    "notifications.dueReminders": "Напоминать о due-карточках",
+    "notifications.dueReminders": "Напоминать о карточках к повтору",
     "notifications.dailyReminder": "Ежедневное напоминание учиться",
     "notifications.dailyTime": "Время ежедневного напоминания",
 
@@ -265,13 +331,18 @@ export const translations = {
     "unit.questions": "{count} вопр.",
 
     "grammar.pageTitle": "Essential Grammar in Use",
-    "grammar.pageSubtitle": "4-е издание · {count} юнитов · сначала due, потом новые",
+    "grammar.pageSubtitle": "4-е издание · {count} юнитов · сначала к повтору, потом новые",
 
     "vocabulary.pageTitle": "4000 Essential English Words — Книга 1",
-    "vocabulary.pageSubtitle": "{count} юнитов · сначала due, потом новые",
+    "vocabulary.pageSubtitle": "{count} юнитов · сначала к повтору, потом новые",
 
     "sat.pageTitle": "Подготовка к SAT",
-    "sat.pageSubtitle": "{count} уроков · сначала due, потом новые",
+    "sat.pageSubtitle": "{count} уроков · сначала к повтору, потом новые",
+
+    "oge.pageTitle": "ОГЭ Математика",
+    "oge.pageSubtitle": "{count} юнита · сначала к повтору · введи число",
+
+    "common.backToOge": "Назад к ОГЭ",
 
     "quiz.question": "Вопрос {current} / {total}",
     "quiz.type.multipleChoice": "Выбор ответа",
@@ -295,6 +366,17 @@ export const translations = {
     "quiz.rating.easy": "Легко",
     "quiz.rating.easyHint": "интервал ×2.5",
     "quiz.rating.wrong": "Ошибка",
+
+    "chat.open": "Открыть AI-репетитора ASTRO",
+    "chat.title": "ASTRO",
+    "chat.subtitle": "Английский · SAT · IELTS 7.0",
+    "chat.close": "Закрыть чат",
+    "chat.placeholder": "Спроси ASTRO что угодно…",
+    "chat.send": "Отправить",
+    "chat.welcome":
+      "Привет! Я ASTRO — твой космический репетитор по английскому, SAT и IELTS. Спрашивай про грамматику, слова или экзамен. Отвечаю по-русски, если ты не пишешь по-английски.",
+    "chat.thinking": "ASTRO думает…",
+    "chat.error": "Не удалось связаться с ASTRO. Проверь интернет и попробуй снова.",
 
     "common.back": "Назад",
     "common.notFound.unit": "Юнит не найден",
@@ -322,7 +404,7 @@ export const translations = {
 
     "vision.noExcuses": "Без отговорок",
     "vision.line1": "Ты забыл?",
-    "vision.line2": "Делай это всю жизнь.",
+    "vision.line2": "Делай это для жизни.",
     "vision.quote": "— Travis Scott",
     "vision.tileHint":
       "Каждая плитка — чек за то, что ты не сдался. Закрой вкладку, когда готов работать — не когда удобно.",
@@ -332,7 +414,7 @@ export const translations = {
     "vision.stats.days": "дн.",
     "vision.stats.grammar": "Юниты грамматики",
     "vision.stats.sat": "Траектория SAT",
-    "vision.stats.words": "4000 Essential Words",
+    "vision.stats.words": "4000 слов — книга 1",
     "vision.mosaic.loading": "Загрузка изображений…",
     "vision.mosaic.empty": "Добавь файлы в public/images/vision/ (напр. img (1).jpg)",
     "vision.mosaic.error": "Не удалось загрузить изображения.",
@@ -341,11 +423,31 @@ export const translations = {
     "vision.lightbox.next": "Следующее",
     "vision.lightbox.esc": "ESC",
 
-    "notify.dueTitle": "ASTRO'XAMS — Повторы due",
+    "notify.dueTitle": "ASTRO'XAMS — Повторы к сроку",
     "notify.dueBody": "{count} карточка готова. Пройди, пока не забыл.",
     "notify.dueBodyPlural": "{count} карточек готовы. Пройди, пока не забыл.",
     "notify.dailyTitle": "ASTRO'XAMS — Ежедневная орбита",
     "notify.dailyBody": "Время учиться. Грамматика, слова, SAT — выбери и вперёд.",
+
+    "stats.title": "Статистика",
+    "stats.subtitle": "Время учёбы, активность, удержание и до экзаменов",
+    "stats.heatmapTitle": "Активность",
+    "stats.heatmapHint": "12 недель · зелёный = был день учёбы",
+    "stats.less": "Меньше",
+    "stats.more": "Учился",
+    "stats.weeklyQuestionsTitle": "Вопросы за неделю",
+    "stats.weeklyQuestionsHint": "Ответов по дням (Пн–Вс)",
+    "stats.retentionTitle": "Удержание по модулям",
+    "stats.retentionHint": "Карточки SM-2 не due ÷ все повторённые",
+    "stats.moduleGrammar": "Грамматика",
+    "stats.moduleVocabulary": "Словарь",
+    "stats.moduleSat": "SAT",
+    "stats.moduleOge": "ОГЭ Математика",
+    "stats.ieltsLabel": "IELTS",
+    "stats.ieltsDate": "Июнь 2027",
+    "stats.satLabel": "SAT",
+    "stats.satDate": "Август 2027",
+    "stats.daysLeft": "{count} дн.",
   },
 } as const;
 

@@ -54,3 +54,15 @@ export function localizeQuizPrompt(prompt: string, locale: Locale): string {
 
   return p;
 }
+
+/** Localize static quiz feedback strings when UI locale is Russian. */
+export function localizeQuizExplanation(explanation: string, locale: Locale): string {
+  if (locale !== "ru") return explanation;
+
+  return explanation
+    .replace(
+      /^A clear sentence shows you know: /,
+      "Хорошее предложение показывает что ты знаешь: "
+    )
+    .replace(/^"(.+)" fits: /, "«$1» подходит: ");
+}

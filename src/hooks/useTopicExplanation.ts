@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useLocale } from "@/lib/i18n/context";
+import type { ModuleId } from "@/types";
 
 export function useTopicExplanation() {
   const { locale, t } = useLocale();
@@ -14,6 +15,7 @@ export function useTopicExplanation() {
       topic: string;
       question: string;
       correctAnswer: string;
+      moduleId?: ModuleId;
     }) => {
       setLoading(true);
       setError(null);

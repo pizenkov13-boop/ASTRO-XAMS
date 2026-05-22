@@ -1,4 +1,4 @@
-export type ModuleId = "grammar" | "vocabulary" | "sat";
+export type ModuleId = "grammar" | "vocabulary" | "sat" | "oge";
 
 export type QuestionType = "multiple_choice" | "fill_blank" | "sentence_construction";
 

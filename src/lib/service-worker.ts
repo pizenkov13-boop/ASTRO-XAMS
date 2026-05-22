@@ -2,6 +2,7 @@
 
 import { loadProgress } from "@/lib/storage";
 import { loadLocale } from "@/lib/i18n/locale";
+import { translate } from "@/lib/i18n/translations";
 import { loadNotificationSettings } from "@/lib/notifications";
 
 const SW_PATH = "/sw.js";
@@ -60,11 +61,19 @@ export async function syncStateToServiceWorker(
   const reg =
     registration ?? (await navigator.serviceWorker.getRegistration());
 
+  const locale = loadLocale();
   const payload = {
     settings: loadNotificationSettings(),
     progress: loadProgress(),
-    locale: loadLocale(),
+    locale,
     syncedAt: Date.now(),
+    notify: {
+      dueTitle: translate(locale, "notify.dueTitle"),
+      dueBody: translate(locale, "notify.dueBody", { count: "{count}" }),
+      dueBodyPlural: translate(locale, "notify.dueBodyPlural", { count: "{count}" }),
+      dailyTitle: translate(locale, "notify.dailyTitle"),
+      dailyBody: translate(locale, "notify.dailyBody"),
+    },
   };
 
   if (reg?.active) {

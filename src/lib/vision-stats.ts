@@ -1,5 +1,4 @@
 import type { UserProgress } from "@/types";
-import { grammarUnits } from "@/data/grammar";
 import { vocabularyUnits } from "@/data/vocabulary";
 import { satUnits } from "@/data/sat";
 

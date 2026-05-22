@@ -1,3 +1,4 @@
+import type { ModuleIconId } from "@/components/icons/astro-icon-types";
 import type { ModuleId } from "@/types";
 
 export interface ModuleInfo {
@@ -7,7 +8,7 @@ export interface ModuleInfo {
   description: string;
   unitCount: number;
   level: string;
-  icon: string;
+  icon: ModuleIconId;
   gradient: string;
   href: string;
 }
@@ -21,7 +22,7 @@ export const MODULES: ModuleInfo[] = [
       "Master A1–B1 grammar from articles to conditionals. Spaced repetition locks each pattern into long-term memory.",
     unitCount: 115,
     level: "A1 – B1",
-    icon: "📖",
+    icon: "grammar",
     gradient: "from-astro-orange to-astro-pink",
     href: "/modules/grammar",
   },
@@ -33,7 +34,7 @@ export const MODULES: ModuleInfo[] = [
       "Core high-frequency vocabulary with context sentences, collocations, and recall drills.",
     unitCount: 30,
     level: "A2 – B1",
-    icon: "🔤",
+    icon: "vocabulary",
     gradient: "from-astro-purple to-astro-cyan",
     href: "/modules/vocabulary",
   },
@@ -45,8 +46,20 @@ export const MODULES: ModuleInfo[] = [
       "Zero to hero: algebra, data, rhetoric, and grammar for a perfect score trajectory.",
     unitCount: 48,
     level: "Zero → 1600",
-    icon: "🎯",
+    icon: "sat",
     gradient: "from-astro-cyan to-astro-orange",
     href: "/modules/sat",
+  },
+  {
+    id: "oge",
+    title: "ОГЭ Математика",
+    subtitle: "Прогрессии · 30 задач",
+    description:
+      "Арифметическая и геометрическая прогрессии для ОГЭ: ряды, суммы, движение, рост и распад.",
+    unitCount: 3,
+    level: "ОГЭ 9 класс",
+    icon: "oge",
+    gradient: "from-green-600 to-astro-cyan",
+    href: "/modules/oge",
   },
 ];

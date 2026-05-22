@@ -28,6 +28,12 @@ const MODULE_KEYS: Record<
     description: "module.sat.description",
     level: "module.sat.level",
   },
+  oge: {
+    title: "module.oge.title",
+    subtitle: "module.oge.subtitle",
+    description: "module.oge.description",
+    level: "module.oge.level",
+  },
 };
 
 export function useLocalizedModules(): ModuleInfo[] {

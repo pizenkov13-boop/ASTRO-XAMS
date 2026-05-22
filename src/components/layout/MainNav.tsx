@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { AstroIcon } from "@/components/icons/AstroIcons";
+import type { NavIconId } from "@/components/icons/astro-icon-types";
 import { useLocale } from "@/lib/i18n/context";
 import { LanguageToggle } from "./LanguageToggle";
 import type { TranslationKey } from "@/lib/i18n/translations";
@@ -11,13 +13,14 @@ import type { TranslationKey } from "@/lib/i18n/translations";
 const LINKS: {
   href: string;
   labelKey: TranslationKey;
-  icon: string;
+  icon: NavIconId;
   shortLabel: string;
 }[] = [
-  { href: "/", labelKey: "nav.home", icon: "⌂", shortLabel: "Home" },
-  { href: "/vision", labelKey: "nav.vision", icon: "◎", shortLabel: "Vision" },
-  { href: "/review", labelKey: "nav.review", icon: "↻", shortLabel: "Review" },
-  { href: "/settings", labelKey: "nav.settings", icon: "⚙", shortLabel: "Settings" },
+  { href: "/", labelKey: "nav.home", icon: "home", shortLabel: "Home" },
+  { href: "/vision", labelKey: "nav.vision", icon: "vision", shortLabel: "Vision" },
+  { href: "/review", labelKey: "nav.review", icon: "review", shortLabel: "Review" },
+  { href: "/stats", labelKey: "nav.stats", icon: "stats", shortLabel: "Stats" },
+  { href: "/settings", labelKey: "nav.settings", icon: "settings", shortLabel: "Settings" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -26,8 +29,18 @@ function isActive(pathname: string, href: string) {
 
 export function MainNav() {
   const pathname = usePathname();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isRu = locale === "ru";
+
+  const desktopNavLink = (active: boolean) =>
+    [
+      "flex min-h-[40px] items-center rounded-full font-display font-bold transition",
+      isRu ? "px-2 py-1.5 text-[10px] tracking-wide" : "px-2.5 py-1.5 text-[11px] tracking-wider",
+      active
+        ? "bg-gradient-to-r from-astro-orange to-astro-purple text-white shadow-neon"
+        : "text-gray-400 hover:text-white",
+    ].join(" ");
 
   useEffect(() => {
     setMenuOpen(false);
@@ -55,8 +68,8 @@ export function MainNav() {
 
   return (
     <>
-      {/* Icon-only quick nav: 390px–767px */}
-      <div className="hidden min-[390px]:flex md:hidden items-center gap-1 rounded-full border border-astro-purple/30 bg-astro-surface/80 p-1">
+      {/* Icon-only quick nav: 390px–1023px */}
+      <div className="hidden min-[390px]:flex lg:hidden items-center gap-1 rounded-full border border-astro-purple/30 bg-astro-surface/80 p-1">
         {LINKS.map(({ href, labelKey, icon }) => {
           const active = isActive(pathname, href);
           return (
@@ -67,37 +80,33 @@ export function MainNav() {
               title={t(labelKey)}
               className={linkClass(active, true)}
             >
-              <span aria-hidden>{icon}</span>
+              <AstroIcon name={icon} className="h-6 w-6" />
             </Link>
           );
         })}
       </div>
 
       {/* Desktop: text labels + language */}
-      <div className="hidden md:flex items-center gap-2">
-        <nav className="flex items-center gap-1 rounded-full border border-astro-purple/30 bg-astro-surface/80 p-1">
+      <div className="hidden min-w-0 shrink-0 items-center gap-1.5 lg:flex lg:gap-2">
+        <nav className="flex min-w-0 max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-astro-purple/30 bg-astro-surface/80 p-0.5 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {LINKS.map(({ href, labelKey }) => {
             const active = isActive(pathname, href);
             return (
               <Link
                 key={href}
                 href={href}
-                className={`rounded-full px-3 py-2 font-display text-xs font-bold tracking-widest transition min-h-[44px] flex items-center ${
-                  active
-                    ? "bg-gradient-to-r from-astro-orange to-astro-purple text-white shadow-neon"
-                    : "text-gray-400 hover:text-white"
-                }`}
+                className={`shrink-0 whitespace-nowrap ${desktopNavLink(active)}`}
               >
                 {t(labelKey)}
               </Link>
             );
           })}
         </nav>
-        <LanguageToggle />
+        <LanguageToggle compact={isRu} />
       </div>
 
       {/* Mobile hamburger: &lt; 768px (and primary nav on &lt; 390px) */}
-      <div className="flex md:hidden items-center gap-2">
+      <div className="flex lg:hidden items-center gap-2">
         <LanguageToggle />
         <button
           type="button"
@@ -157,9 +166,7 @@ export function MainNav() {
                     onClick={() => setMenuOpen(false)}
                     className={linkClass(active)}
                   >
-                    <span className="text-xl" aria-hidden>
-                      {icon}
-                    </span>
+                    <AstroIcon name={icon} className="h-7 w-7 shrink-0" />
                     <span>{t(labelKey)}</span>
                   </Link>
                 );

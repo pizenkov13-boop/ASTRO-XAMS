@@ -49,9 +49,10 @@ function parseTime(hhmm) {
   return { hh: hh || 9, mm: mm || 0 };
 }
 
+/** SM-2 cards use nextReview (epoch ms), not dueAt. */
 function isDue(card, now) {
-  if (!card || !card.dueAt) return false;
-  return new Date(card.dueAt).getTime() <= now;
+  if (!card || card.nextReview == null) return false;
+  return Number(card.nextReview) <= now;
 }
 
 function countDueCards(progress, now = Date.now()) {
@@ -59,7 +60,19 @@ function countDueCards(progress, now = Date.now()) {
   return Object.values(progress.cards).filter((c) => isDue(c, now)).length;
 }
 
-async function maybeNotifyDue(settings, progress, now) {
+function notifyStrings(state) {
+  const n = state?.notify;
+  if (n?.dueTitle) return n;
+  return {
+    dueTitle: "ASTRO'XAMS — Reviews due",
+    dueBody: "{count} card ready. Knock them out before you forget.",
+    dueBodyPlural: "{count} cards ready. Knock them out before you forget.",
+    dailyTitle: "ASTRO'XAMS — Daily orbit",
+    dailyBody: "Time to study. Grammar, words, SAT — pick one and move.",
+  };
+}
+
+async function maybeNotifyDue(settings, progress, now, strings) {
   if (!settings?.enabled || !settings.dueReminders) return settings;
 
   const due = countDueCards(progress, now);
@@ -71,8 +84,11 @@ async function maybeNotifyDue(settings, progress, now) {
   const fourHours = 4 * 60 * 60 * 1000;
   if (now - last < fourHours) return settings;
 
-  await self.registration.showNotification("ASTRO'XAMS — Reviews due", {
-    body: `${due} card${due === 1 ? "" : "s"} ready. Knock them out before you forget.`,
+  const bodyTemplate = due === 1 ? strings.dueBody : strings.dueBodyPlural;
+  const body = bodyTemplate.replace("{count}", String(due));
+
+  await self.registration.showNotification(strings.dueTitle, {
+    body,
     tag: "astro-due-review",
     icon: "/favicon.ico",
   });
@@ -80,7 +96,7 @@ async function maybeNotifyDue(settings, progress, now) {
   return { ...settings, lastDueNotifyAt: new Date(now).toISOString() };
 }
 
-async function maybeNotifyDaily(settings, now) {
+async function maybeNotifyDaily(settings, now, strings) {
   if (!settings?.enabled || !settings.dailyReminder) return settings;
 
   const today = new Date(now).toISOString().slice(0, 10);
@@ -93,8 +109,8 @@ async function maybeNotifyDaily(settings, now) {
   const diffMs = now - target.getTime();
   if (diffMs < 0 || diffMs > 5 * 60 * 1000) return settings;
 
-  await self.registration.showNotification("ASTRO'XAMS — Daily orbit", {
-    body: "Time to study. Grammar, words, SAT — pick one and move.",
+  await self.registration.showNotification(strings.dailyTitle, {
+    body: strings.dailyBody,
     tag: "astro-daily",
     icon: "/favicon.ico",
   });
@@ -109,9 +125,10 @@ async function runChecks() {
   const now = Date.now();
   let settings = state.settings ?? {};
   const progress = state.progress ?? { cards: {} };
+  const strings = notifyStrings(state);
 
-  settings = await maybeNotifyDue(settings, progress, now);
-  settings = await maybeNotifyDaily(settings, now);
+  settings = await maybeNotifyDue(settings, progress, now, strings);
+  settings = await maybeNotifyDaily(settings, now, strings);
 
   await persistState({ ...state, settings, lastCheckAt: now });
 }
@@ -121,7 +138,6 @@ async function scheduleChecks() {
   const interval = setInterval(() => {
     runChecks();
   }, 60_000);
-  // Keep reference so interval isn't GC'd in some runtimes
   self.__astroCheckInterval = interval;
 }
 
@@ -137,7 +153,6 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-/* Periodic background sync when supported (Chrome) */
 self.addEventListener("periodicsync", (event) => {
   if (event.tag === "astro-notify") {
     event.waitUntil(runChecks());

@@ -1,16 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Question, QuestionType, ReviewQuality, Unit, UserProgress } from "@/types";
 import type { QuizResult } from "@/types/quiz";
 import { playRandomAdlib, playCelebration, preloadAdlibs } from "@/lib/adlibs";
 import { createCard, reviewCard } from "@/lib/sm2";
 import { sortQuestionsForSession } from "@/lib/quiz-order";
+import { useStudyTimer } from "@/contexts/StudyTimerContext";
 import { useTopicExplanation } from "@/hooks/useTopicExplanation";
 import { useLocale } from "@/lib/i18n/context";
-import { localizeQuizPrompt } from "@/lib/i18n/quiz-prompts";
+import { recordQuestionAnswered } from "@/lib/study-stats";
+import { localizeQuizExplanation, localizeQuizPrompt } from "@/lib/i18n/quiz-prompts";
 import type { TranslationKey } from "@/lib/i18n/translations";
+import { AstroIcon } from "@/components/icons/AstroIcons";
 import { QuizEffects } from "./QuizEffects";
 import { RatingButtons } from "./RatingButtons";
 import { TopicExplanation } from "./TopicExplanation";
@@ -19,11 +22,75 @@ const MIN_QUESTIONS = 10;
 const STREAK_CELEBRATION = 5;
 
 function normalizeAnswer(s: string): string {
-  return s.trim().toLowerCase().replace(/[.!?]+$/, "");
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/,/g, ".")
+    .replace(/\s+/g, "")
+    .replace(/[.!?]+$/, "");
+}
+
+const CONTRACTION_EXPANSIONS: [RegExp, string][] = [
+  [/\bdon't\b/g, "do not"],
+  [/\bdoesn't\b/g, "does not"],
+  [/\bdidn't\b/g, "did not"],
+  [/\bcan't\b/g, "cannot"],
+  [/\bwon't\b/g, "will not"],
+  [/\bhaven't\b/g, "have not"],
+  [/\bhasn't\b/g, "has not"],
+  [/\bwouldn't\b/g, "would not"],
+  [/\bshouldn't\b/g, "should not"],
+  [/\bthey're\b/g, "they are"],
+  [/\byou're\b/g, "you are"],
+  [/\bi'm\b/g, "i am"],
+  [/\bwe're\b/g, "we are"],
+  [/\bhe's\b/g, "he is"],
+  [/\bshe's\b/g, "she is"],
+  [/\bit's\b/g, "it is"],
+];
+
+function normalizeSentence(s: string): string {
+  let x = s.trim().toLowerCase();
+  for (const [re, rep] of CONTRACTION_EXPANSIONS) {
+    x = x.replace(re, rep);
+  }
+  return x
+    .replace(/['']/g, "'")
+    .replace(/[.!?;,]+$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function sentenceUsesPromptWord(prompt: string, userInput: string): boolean {
+  const match = prompt.match(/using "([^"]+)"/i);
+  if (!match) return false;
+  const word = match[1];
+  return new RegExp(`\\b${escapeRegExp(word)}\\b`, "i").test(userInput.trim());
 }
 
 function checkAnswer(question: Question, userInput: string): boolean {
-  const normalized = normalizeAnswer(userInput);
+  const trimmed = userInput.trim();
+  if (!trimmed) return false;
+
+  if (question.type === "sentence_construction") {
+    const targets = Array.isArray(question.correctAnswer)
+      ? question.correctAnswer
+      : [question.correctAnswer];
+
+    if (
+      targets.some((t) => normalizeSentence(trimmed) === normalizeSentence(t))
+    ) {
+      return true;
+    }
+
+    return sentenceUsesPromptWord(question.prompt, trimmed);
+  }
+
+  const normalized = normalizeAnswer(trimmed);
   const correct = question.correctAnswer;
   if (Array.isArray(correct)) {
     return correct.some((c) => normalizeAnswer(c) === normalized);
@@ -71,17 +138,22 @@ export function QuizSession({
   onCorrect,
 }: QuizSessionProps) {
   const { t, locale } = useLocale();
+  const { refresh: refreshStudyTimer } = useStudyTimer();
   const [explainOpen, setExplainOpen] = useState(false);
-  const skipTimeoutRef = useRef(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const allowTimeoutRef = useRef(false);
+  const prevTimeLeftRef = useRef(questions[0]?.timeLimitSec ?? 30);
 
-  const questions = useMemo(() => {
+  /** Freeze question order for the session so progress updates do not reshuffle mid-quiz. */
+  const [questions] = useState(() => {
     const pool = [...unit.questions];
     while (pool.length < MIN_QUESTIONS) {
       pool.push(...unit.questions);
     }
     const sliced = pool.slice(0, Math.max(MIN_QUESTIONS, unit.questions.length));
     return sortQuestionsForSession(sliced, unit, progress);
-  }, [unit.questions, unit, progress]);
+  });
 
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
@@ -109,30 +181,50 @@ export function QuizSession({
   } = useTopicExplanation();
 
   const q = questions[index];
+  const questionId = q?.id ?? "";
+  const questionLimit = q?.timeLimitSec ?? 30;
 
   useEffect(() => {
     void preloadAdlibs();
   }, []);
 
-  // Reset timer whenever the active question changes (must run before countdown)
-  useEffect(() => {
-    setTimeLeft(q.timeLimitSec);
-    skipTimeoutRef.current = true;
-    const id = window.setTimeout(() => {
-      skipTimeoutRef.current = false;
-    }, 150);
-    return () => window.clearTimeout(id);
-  }, [q.id, q.timeLimitSec]);
+  // Reset timer + input before paint; arm timeout only after countdown actually started
+  useLayoutEffect(() => {
+    if (!q) return;
+
+    allowTimeoutRef.current = false;
+    prevTimeLeftRef.current = questionLimit;
+    setTimeLeft(questionLimit);
+
+    let focusFrame = 0;
+    if (!answered && (q.type === "fill_blank" || q.type === "sentence_construction")) {
+      setInput("");
+      focusFrame = window.requestAnimationFrame(() => {
+        const el =
+          q.type === "fill_blank" ? inputRef.current : textareaRef.current;
+        el?.focus({ preventScroll: true });
+      });
+    }
+
+    const armTimer = window.setTimeout(() => {
+      if (!answered) allowTimeoutRef.current = true;
+    }, 400);
+
+    return () => {
+      if (focusFrame) window.cancelAnimationFrame(focusFrame);
+      window.clearTimeout(armTimer);
+    };
+  }, [questionId, questionLimit, answered, q?.type]);
 
   useEffect(() => {
-    if (answered) return;
+    if (!q || answered) return;
 
     const intervalId = window.setInterval(() => {
       setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, [q.id, answered]);
+  }, [questionId, answered]);
 
   const applySm2 = useCallback(
     (quality: ReviewQuality, cardId: string) => {
@@ -165,6 +257,8 @@ export function QuizSession({
       }
 
       setAnswered(true);
+      recordQuestionAnswered();
+      refreshStudyTimer();
 
       const correct =
         !timedOut &&
@@ -214,14 +308,22 @@ export function QuizSession({
       resetAi,
       applySm2,
       onCorrect,
+      refreshStudyTimer,
     ]
   );
 
   useEffect(() => {
-    if (timeLeft === 0 && !answered && !skipTimeoutRef.current) {
-      handleSubmit(true);
-    }
-  }, [timeLeft, answered, handleSubmit]);
+    const timedOut =
+      timeLeft === 0 &&
+      prevTimeLeftRef.current > 0 &&
+      allowTimeoutRef.current &&
+      !answered;
+
+    prevTimeLeftRef.current = timeLeft;
+
+    if (!q || !timedOut) return;
+    handleSubmit(true);
+  }, [timeLeft, answered, handleSubmit, questionId, q]);
 
   const handleMcChoice = (opt: string) => {
     if (answered) return;
@@ -243,6 +345,7 @@ export function QuizSession({
       topic: unit.description || unit.title,
       question: q.prompt,
       correctAnswer: formatCorrectAnswer(q),
+      moduleId: unit.moduleId,
     });
   };
 
@@ -271,13 +374,25 @@ export function QuizSession({
     setPendingCardId(null);
     setExplainOpen(false);
     setTimeLeft(nextQ.timeLimitSec);
+    allowTimeoutRef.current = false;
+    prevTimeLeftRef.current = nextQ.timeLimitSec;
     resetAi();
   };
 
-  const timerPct = (timeLeft / q.timeLimitSec) * 100;
+  if (!q) {
+    return (
+      <p className="text-center text-gray-500">{t("common.loading")}</p>
+    );
+  }
+
+  const timerPct =
+    q.timeLimitSec > 0 ? (timeLeft / q.timeLimitSec) * 100 : 0;
   const scoreSoFar = Math.round((correctCount / questions.length) * 100);
   const showMcFeedback = answered && hasPickedChoice;
   const displayPrompt = localizeQuizPrompt(q.prompt, locale);
+  const displayExplanation = q.explanation
+    ? localizeQuizExplanation(q.explanation, locale)
+    : undefined;
   const ratingLabel = rating ? t(RATING_LABEL_KEYS[rating]) : "";
 
   return (
@@ -290,7 +405,10 @@ export function QuizSession({
         </span>
         <div className="flex gap-3 font-mono">
           <span className="text-astro-cyan">{scoreSoFar}%</span>
-          <span className="text-astro-orange">🔥 {sessionStreak}</span>
+          <span className="inline-flex items-center gap-1 text-astro-orange">
+            <AstroIcon name="streak-flame" pulse className="h-4 w-4" />
+            {sessionStreak}
+          </span>
         </div>
       </div>
 
@@ -304,10 +422,11 @@ export function QuizSession({
       <AnimatePresence mode="wait">
         <motion.div
           key={q.id}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+          initial={false}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="relative z-10 rounded-2xl border border-astro-purple/30 bg-astro-card p-4 sm:p-6"
+          style={{ pointerEvents: "auto" }}
         >
           <p className="text-base uppercase tracking-wider text-astro-purple">
             {t(QUESTION_TYPE_KEYS[q.type])}
@@ -346,10 +465,13 @@ export function QuizSession({
           )}
 
           {q.type === "fill_blank" && (
-            <div className="relative z-10 mt-6">
+            <div className="relative z-30 mt-6" style={{ pointerEvents: "auto" }}>
               <input
+                ref={inputRef}
                 type="text"
-                className="input-mobile"
+                inputMode="text"
+                enterKeyHint="done"
+                className="input-mobile pointer-events-auto relative z-30"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -359,6 +481,8 @@ export function QuizSession({
                   }
                 }}
                 disabled={answered}
+                autoFocus
+                tabIndex={0}
                 autoComplete="off"
                 autoCapitalize="off"
                 spellCheck={false}
@@ -369,13 +493,16 @@ export function QuizSession({
           )}
 
           {q.type === "sentence_construction" && (
-            <div className="relative z-10 mt-6">
+            <div className="relative z-30 mt-6" style={{ pointerEvents: "auto" }}>
               <textarea
-                className="input-mobile min-h-[120px] resize-y"
+                ref={textareaRef}
+                className="input-mobile pointer-events-auto relative z-30 min-h-[120px] resize-y"
                 rows={3}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={answered}
+                autoFocus
+                tabIndex={0}
                 autoComplete="off"
                 placeholder={t("quiz.placeholder")}
                 aria-label={t("quiz.placeholder")}
@@ -385,7 +512,7 @@ export function QuizSession({
 
           {answered && !wasCorrect && (
             <TopicExplanation
-              staticExplanation={q.explanation}
+              staticExplanation={displayExplanation}
               aiExplanation={aiExplanation}
               loading={aiLoading}
               error={aiError}

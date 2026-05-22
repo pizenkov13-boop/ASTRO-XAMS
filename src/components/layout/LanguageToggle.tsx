@@ -3,14 +3,22 @@
 import { useLocale } from "@/lib/i18n/context";
 import type { Locale } from "@/lib/i18n/locale";
 
-export function LanguageToggle() {
+interface LanguageToggleProps {
+  compact?: boolean;
+}
+
+export function LanguageToggle({ compact = false }: LanguageToggleProps) {
   const { locale, setLocale, t } = useLocale();
 
   const btn = (lang: Locale, labelKey: "lang.ru" | "lang.en") => (
     <button
       type="button"
       onClick={() => setLocale(lang)}
-      className={`min-h-[44px] min-w-[44px] rounded-full px-3 py-2 font-display text-base font-bold tracking-widest transition touch-manipulation ${
+      className={`rounded-full font-display font-bold transition touch-manipulation ${
+        compact
+          ? "min-h-[36px] min-w-[36px] px-2 py-1 text-[10px] tracking-wide"
+          : "min-h-[44px] min-w-[44px] px-3 py-2 text-base tracking-widest"
+      } ${
         locale === lang
           ? "bg-astro-orange text-black shadow-neon"
           : "text-gray-500 hover:text-white"

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { AstroIcon } from "@/components/icons/AstroIcons";
 import { useLocale } from "@/lib/i18n/context";
 import type { ModuleInfo } from "@/data/modules";
 
@@ -33,7 +34,7 @@ export function ModuleCard({
             className={`absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br ${module.gradient} opacity-20 blur-2xl transition group-hover:opacity-40`}
           />
           <div className="relative">
-            <span className="text-4xl">{module.icon}</span>
+            <AstroIcon name={module.icon} className="h-14 w-14" />
             <h2 className="mt-3 font-display text-xl font-bold text-white group-hover:text-astro-orange">
               {module.title}
             </h2>

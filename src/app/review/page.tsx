@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { grammarUnits } from "@/data/grammar";
 import { vocabularyUnits } from "@/data/vocabulary";
 import { satUnits } from "@/data/sat";
+import { ogeUnits } from "@/data/oge";
 import { StreakBar } from "@/components/layout/StreakBar";
 import { useProgress } from "@/hooks/useProgress";
 import { useLocale } from "@/lib/i18n/context";
@@ -15,7 +16,7 @@ export default function ReviewPage() {
   const { progress, hydrated, levelTitle } = useProgress();
 
   const { due, fresh, sorted } = useMemo(() => {
-    const all = [...grammarUnits, ...vocabularyUnits, ...satUnits];
+    const all = [...grammarUnits, ...vocabularyUnits, ...satUnits, ...ogeUnits];
     return partitionUnitsForStudy(all, progress);
   }, [progress]);
 
