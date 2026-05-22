@@ -149,12 +149,9 @@ export function QuizSession({
     const sliced = pool.slice(0, Math.max(MIN_QUESTIONS, unit.questions.length));
     return sortQuestionsForSession(sliced, unit, progress);
   });
-  const prevTimeLeftRef = useRef(questions[0]?.timeLimitSec ?? 30);
-
   const [explainOpen, setExplainOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const allowTimeoutRef = useRef(false);
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
@@ -169,7 +166,6 @@ export function QuizSession({
   const [wasCorrect, setWasCorrect] = useState(false);
   const [rated, setRated] = useState(false);
   const [rating, setRating] = useState<ReviewQuality | null>(null);
-  const [timeLeft, setTimeLeft] = useState(questions[0]?.timeLimitSec ?? 30);
   const [pendingCardId, setPendingCardId] = useState<string | null>(null);
 
   const {
@@ -182,19 +178,13 @@ export function QuizSession({
 
   const q = questions[index];
   const questionId = q?.id ?? "";
-  const questionLimit = q?.timeLimitSec ?? 30;
 
   useEffect(() => {
     void preloadAdlibs();
   }, []);
 
-  // Reset timer + input before paint; arm timeout only after countdown actually started
   useLayoutEffect(() => {
     if (!q) return;
-
-    allowTimeoutRef.current = false;
-    prevTimeLeftRef.current = questionLimit;
-    setTimeLeft(questionLimit);
 
     let focusFrame = 0;
     if (!answered && (q.type === "fill_blank" || q.type === "sentence_construction")) {
@@ -206,25 +196,10 @@ export function QuizSession({
       });
     }
 
-    const armTimer = window.setTimeout(() => {
-      if (!answered) allowTimeoutRef.current = true;
-    }, 400);
-
     return () => {
       if (focusFrame) window.cancelAnimationFrame(focusFrame);
-      window.clearTimeout(armTimer);
     };
-  }, [questionId, questionLimit, answered, q?.type]);
-
-  useEffect(() => {
-    if (!q || answered) return;
-
-    const intervalId = window.setInterval(() => {
-      setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, [questionId, answered]);
+  }, [questionId, answered, q?.type]);
 
   const applySm2 = useCallback(
     (quality: ReviewQuality, cardId: string) => {
@@ -245,7 +220,7 @@ export function QuizSession({
   );
 
   const handleSubmit = useCallback(
-    (timedOut = false, choiceOverride?: string) => {
+    (choiceOverride?: string) => {
       if (answered) return;
 
       const picked =
@@ -261,10 +236,9 @@ export function QuizSession({
       refreshStudyTimer();
 
       const correct =
-        !timedOut &&
-        (q.type === "multiple_choice"
+        q.type === "multiple_choice"
           ? isCorrectOption(picked, q)
-          : checkAnswer(q, picked));
+          : checkAnswer(q, picked);
 
       setWasCorrect(correct);
       const cardId = `${unit.id}-${q.id}`;
@@ -312,22 +286,9 @@ export function QuizSession({
     ]
   );
 
-  useEffect(() => {
-    const timedOut =
-      timeLeft === 0 &&
-      prevTimeLeftRef.current > 0 &&
-      allowTimeoutRef.current &&
-      !answered;
-
-    prevTimeLeftRef.current = timeLeft;
-
-    if (!q || !timedOut) return;
-    handleSubmit(true);
-  }, [timeLeft, answered, handleSubmit, questionId, q]);
-
   const handleMcChoice = (opt: string) => {
     if (answered) return;
-    handleSubmit(false, opt);
+    handleSubmit(opt);
   };
 
   const handleRate = (quality: ReviewQuality) => {
@@ -362,7 +323,6 @@ export function QuizSession({
       });
       return;
     }
-    const nextQ = questions[nextIndex];
     setIndex(nextIndex);
     setInput("");
     setSelected(null);
@@ -373,9 +333,6 @@ export function QuizSession({
     setRating(null);
     setPendingCardId(null);
     setExplainOpen(false);
-    setTimeLeft(nextQ.timeLimitSec);
-    allowTimeoutRef.current = false;
-    prevTimeLeftRef.current = nextQ.timeLimitSec;
     resetAi();
   };
 
@@ -385,8 +342,7 @@ export function QuizSession({
     );
   }
 
-  const timerPct =
-    q.timeLimitSec > 0 ? (timeLeft / q.timeLimitSec) * 100 : 0;
+  const progressPct = Math.round(((index + 1) / questions.length) * 100);
   const scoreSoFar = Math.round((correctCount / questions.length) * 100);
   const showMcFeedback = answered && hasPickedChoice;
   const displayPrompt = localizeQuizPrompt(q.prompt, locale);
@@ -414,8 +370,9 @@ export function QuizSession({
 
       <div className="mb-4 h-1 overflow-hidden rounded-full bg-astro-surface">
         <motion.div
-          className={`h-full ${timeLeft < 5 ? "bg-red-500" : "bg-astro-cyan"}`}
-          style={{ width: `${timerPct}%` }}
+          className="h-full bg-astro-cyan"
+          style={{ width: `${progressPct}%` }}
+          layout
         />
       </div>
 
