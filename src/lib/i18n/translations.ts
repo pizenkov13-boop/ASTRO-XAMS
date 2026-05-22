@@ -60,9 +60,9 @@ export const translations = {
     "module.sat.level": "Zero → 1600",
 
     "module.oge.title": "ОГЭ Математика",
-    "module.oge.subtitle": "Progressions · 30 problems",
+    "module.oge.subtitle": "Progressions & triangles · 4 units",
     "module.oge.description":
-      "Arithmetic and geometric progressions for OGE: rows, sums, motion, growth and decay.",
+      "Task 14: progressions. Task 15: triangle geometry — angles, medians, area, trigonometry.",
     "module.oge.level": "OGE Grade 9",
 
     "level.spaceCadet": "Space Cadet",
@@ -283,9 +283,9 @@ export const translations = {
     "module.sat.level": "0 → 1600",
 
     "module.oge.title": "ОГЭ Математика",
-    "module.oge.subtitle": "Прогрессии · 30 задач",
+    "module.oge.subtitle": "Прогрессии и треугольники · 4 юнита",
     "module.oge.description":
-      "Арифметическая и геометрическая прогрессии для ОГЭ: ряды, суммы, движение, рост и распад.",
+      "Задание 14: прогрессии. Задание 15: геометрия треугольников — углы, медианы, площадь, тригонометрия.",
     "module.oge.level": "ОГЭ 9 класс",
 
     "level.spaceCadet": "Космический кадет",

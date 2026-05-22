@@ -1,11 +1,8 @@
 import type { Question, Unit } from "@/types";
+import { TRIANGLE_ITEMS } from "./triangles";
+import type { OgeItem } from "./types";
 
-type OgeItem = {
-  id: string;
-  prompt: string;
-  correct: string | string[];
-  explain: string;
-};
+export type { OgeItem } from "./types";
 
 function toFillQuestion(item: OgeItem): Question {
   const correct = Array.isArray(item.correct) ? item.correct : [item.correct];
@@ -261,23 +258,30 @@ export const ogeUnits: Unit[] = [
   buildUnit(
     "oge-arith-rows",
     1,
-    "Арифметическая прогрессия — ряды",
+    "Задание 14 — Арифметическая прогрессия (ряды)",
     "ОГЭ · n-й член и сумма рядов в амфитеатре",
     ARITH_ROWS
   ),
   buildUnit(
     "oge-arith-motion",
     2,
-    "Арифметическая прогрессия — движение",
+    "Задание 14 — Арифметическая прогрессия (движение)",
     "ОГЭ · температура, торможение, путь поезда",
     ARITH_MOTION
   ),
   buildUnit(
     "oge-geom",
     3,
-    "Геометрическая прогрессия",
+    "Задание 14 — Геометрическая прогрессия",
     "ОГЭ · распад, рост колоний, прыжки мячика",
     GEOM
+  ),
+  buildUnit(
+    "oge-triangles",
+    4,
+    "Задание 15 — Геометрия треугольников",
+    "ОГЭ · углы, медианы, биссектрисы, площадь, тригонометрия",
+    TRIANGLE_ITEMS
   ),
 ];
 

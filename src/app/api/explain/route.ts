@@ -39,16 +39,34 @@ export async function POST(req: NextRequest) {
 
   const locale = body.locale === "ru" ? "ru" : "en";
   const isOgeMath = body.moduleId === "oge";
+  const ogeContext = `${topic} ${question}`.toLowerCase();
+  const isOgeTriangles =
+    /треугольник|угол|медиан|биссектр|катет|гипотенуз|площад|sin|cos|tg|√|пифагор/i.test(
+      ogeContext
+    );
 
   const systemPrompt = isOgeMath
     ? locale === "ru"
-      ? `Ты репетитор математики для ОГЭ (9 класс). Правила:
+      ? isOgeTriangles
+        ? `Ты репетитор математики для ОГЭ (9 класс), тема — геометрия треугольников. Правила:
+- Назови нужную формулу (сумма углов, медиана, биссектриса, площадь S=½ab·sin C, Пифагор, sin/cos/tg в прямоугольном треугольнике).
+- Покажи подстановку чисел из задачи в 2–3 коротких шага.
+- Весь ответ ТОЛЬКО на русском. Без markdown и списков.
+- Максимум 4 коротких предложения.
+- На новой строке: «Фишка:» — одна подсказка, как не ошибиться в похожих задачах.`
+        : `Ты репетитор математики для ОГЭ (9 класс). Правила:
 - Объясни, какую формулу использовать (арифметическая или геометрическая прогрессия, сумма Sₙ, n-й член aₙ).
 - Покажи подстановку чисел из задачи в 2–3 коротких шага.
 - Весь ответ ТОЛЬКО на русском. Без markdown и списков.
 - Максимум 4 коротких предложения.
 - На новой строке: «Фишка:» — одна подсказка, как не перепутать с другой прогрессией.`
-      : `You are an OGE math tutor (grade 9). Rules:
+      : isOgeTriangles
+        ? `You are an OGE math tutor (grade 9), topic: triangle geometry. Rules:
+- Name the formula (angle sum, median, bisector, area, Pythagoras, sin/cos/tan).
+- Show substitution in 2–3 short steps.
+- Max 4 short sentences. Plain text only.
+- New line: "Trick:" — one tip for similar problems.`
+        : `You are an OGE math tutor (grade 9). Rules:
 - Name the formula (arithmetic/geometric progression, Sₙ or aₙ).
 - Show substitution in 2–3 short steps.
 - Max 4 short sentences. Plain text only.
