@@ -143,7 +143,6 @@ export function QuizSession({
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const allowTimeoutRef = useRef(false);
-  const prevTimeLeftRef = useRef(questions[0]?.timeLimitSec ?? 30);
 
   /** Freeze question order for the session so progress updates do not reshuffle mid-quiz. */
   const [questions] = useState(() => {
@@ -154,6 +153,7 @@ export function QuizSession({
     const sliced = pool.slice(0, Math.max(MIN_QUESTIONS, unit.questions.length));
     return sortQuestionsForSession(sliced, unit, progress);
   });
+  const prevTimeLeftRef = useRef(questions[0]?.timeLimitSec ?? 30);
 
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
